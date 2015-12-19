@@ -118,6 +118,7 @@ void SockMsg::OnReceive(int nErrorCode)
 	while (ReceiveFrom(&pack1, sizeof(pack1),sIP,port))
 	{
 		if (pack1.nCmd = SEND_ON)
+		if (pack1.nCmd == SEND_ON)
 		{
 			StrInfo UserInfo;
 			memcpy(&UserInfo, pack1.data, sizeof(UserInfo));
@@ -131,6 +132,7 @@ void SockMsg::OnReceive(int nErrorCode)
 			break;
 		}
 		if (pack1.nCmd = SEND_REPLY)
+		else if (pack1.nCmd == SEND_REPLY)
 		{
 			StrInfo UserInfo;
 			memcpy(&UserInfo, pack1.data, sizeof(UserInfo));
@@ -142,6 +144,7 @@ void SockMsg::OnReceive(int nErrorCode)
 			break;
 		}
 		if (pack1.nCmd == SEND_MSG)
+		else if (pack1.nCmd == SEND_MSG)
 		{
 			wchar_t * wMsg = (wchar_t *)pack1.data;
 			//UINT16 MsgLen = (UINT16)wMsg[0];

@@ -97,10 +97,10 @@ CListCtrl * CChatDlg::GetUserListControl()
 
 int CChatDlg::InitialUserList()
 {
-	m_user.InsertColumn(0, L"USER NAME", LVCFMT_LEFT, 150, -1);
-	m_user.InsertColumn(1, L"HOST NAME", LVCFMT_LEFT, 150, -1);
-	m_user.InsertColumn(2, L"IP ADDRESS", LVCFMT_LEFT, 150, -1);
-	m_user.InsertColumn(3, L"MASK", LVCFMT_LEFT, 150, -1);
+	m_user.InsertColumn(0, L"USER NAME", LVCFMT_LEFT, 100, -1);
+	m_user.InsertColumn(1, L"HOST NAME", LVCFMT_LEFT, 100, -1);
+	m_user.InsertColumn(2, L"IP ADDRESS", LVCFMT_LEFT, 100, -1);
+	m_user.InsertColumn(3, L"MASK", LVCFMT_LEFT, 100, -1);
 	
 	DWORD dwStyle = m_user.GetExtendedStyle();
 	dwStyle |= LVS_EX_FULLROWSELECT; 
@@ -136,7 +136,6 @@ BOOL CChatDlg::OnInitDialog()
 
 void CChatDlg::OnBnClickedButtonSend()
 {
-	// TODO: 在此添加控件通知?理程序代?
 	int nSel = m_user.GetSelectedCount() - 1;
 	if (nSel < 0)
 	{
@@ -160,6 +159,7 @@ void CChatDlg::OnBnClickedButtonSend()
 	}
 
 	//Send part
+	theApp.SendMsg(pUser->GetIp(), input);
 	CString showStr;
 	CTime time = CTime::GetCurrentTime();
 	tmpStr = time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]"));
@@ -185,13 +185,14 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 	// TODO: 在此添加控件通知?理程序代?
 	int nSel = pNMItemActivate->iItem;
 	if (nSel < 0)
-	{ 
+	{
 		return;
 	}
 	else {
-		if (NULL == pCurrentUser ){
+		if (NULL == pCurrentUser){
 			pCurrentUser = &theApp.user[nSel];
-		}else{
+		}
+		else{
 			if (pCurrentUser->GetIp() != theApp.user[nSel].GetIp()){
 				pCurrentUser = &theApp.user[nSel];
 			}
@@ -199,10 +200,47 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 				return;
 			}
 		}
-				
+
 		SetDlgItemTextW(IDC_EDIT_SHOW, L"");
 		CString showStr = pCurrentUser->GetAllMessage();
 		m_message.SetWindowText(showStr);
+
+		GetDlgItem(IDC_EDIT_INPUT)->SetFocus();
+		//CString tmp;
+		//t//mp.Format(L"now selected No.%d\r\n %s", nSel, theApp.user[nSel].GetName() + "\t" + theApp.user[nSel].GetIp());
+		//AfxMessageBox(tmp);
+		//return;
+	}
+	*pResult = 0;
+
+}
+
+/*
+void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 在此添加控件通知?理程序代?
+	int nSel = pNMItemActivate->iItem;
+	if (nSel < 0)
+	{ 
+		return;
+	}
+	else {
+		if (NULL == pCurrentUser){
+			pCurrentUser = &theApp.user[nSel];
+		}
+		else{
+			if (pCurrentUser->GetIp() != theApp.user[nSel].GetIp()){
+				pCurrentUser = &theApp.user[nSel];
+			}
+			else{
+				return;
+			}
+
+		}
+		SetDlgItemTextW(IDC_EDIT_SHOW, L"");
+		//CString showStr = pCurrentUser->GetAllMessage();
+		//m_message.SetWindowText(showStr);
 
 		GetDlgItem(IDC_EDIT_INPUT)->SetFocus();
 		CString tmp;
@@ -211,7 +249,7 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 		return;
 	}
 	*pResult = 0;
-}
+}*/
 
 
 

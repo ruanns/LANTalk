@@ -99,9 +99,6 @@ BOOL CLANTalkDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_lan.Create(IDD_LAN_SELECT);
-	m_lan.InitialLanSelList();
-	m_lan.ShowWindow(1);
 	
 	AfxInitRichEdit2();
 	m_chat.Create(IDD_CHAT);
@@ -187,6 +184,10 @@ void CLANTalkDlg::OnSize(UINT nType, int cx, int cy)
 	
 }
 
+CChatDlg * CLANTalkDlg::GetChatDlg()
+{
+	return &m_chat;
+}
 
 void CLANTalkDlg::OnTimer(UINT_PTR nIDEvent)
 {
@@ -270,7 +271,6 @@ void CLANTalkDlg::InsertUser(CString UserName, CString HostName, CString IP, CSt
 	pList = m_chat.GetUserListControl();
 	//int nColumnCount = pList->GetHeaderCtrl()->GetItemCount();
 
-	//pList->InsertItem(pos, UserName,0);
 	pList->InsertItem(LVIF_TEXT | LVIF_STATE, pos, UserName,
 		(pos % 2) == 0 ? LVIS_SELECTED : 0, LVIS_SELECTED, 0, 0);
 	pList->SetItemText(pos, 0, UserName);

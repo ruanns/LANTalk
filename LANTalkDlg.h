@@ -41,4 +41,6 @@ public:
 public:
 	int SendMsg(CString sIP, CString MyMsg);
 	void InsertUser(CString UserName, CString HostName, CString IP, CString Mark);
+	CChatDlg * GetChatDlg();
+
 };

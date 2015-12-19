@@ -28,3 +28,5 @@
 *.app
 *.sdf
 LANTalk.opensdf
+*.ipch
+*.aps

@@ -45,6 +45,7 @@ public:
 	SockMsg Mymsg;
 	EUser user[MAX_USER_NUM];
 	int currentUserNum;
+	UINT lanSel;
 public:
 	int InitialNetwork();
 };

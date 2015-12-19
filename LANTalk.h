@@ -45,8 +45,14 @@ public:
 	SockMsg Mymsg;
 	EUser user[MAX_USER_NUM];
 	int currentUserNum;
+	int bPort;
 public:
 	int InitialNetwork();
+	int SayHello();
+	int ReplyHello(CString desIP);
+	int SendMsg(CString sIP, CString MyMsg);
+	virtual int ExitInstance();
+	int SendMessage();
 };
 
 extern CLANTalkApp theApp;

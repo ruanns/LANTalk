@@ -56,6 +56,8 @@ BOOL CLANTalkApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
+	
+
 	CWinApp::InitInstance();
 
 	if (!AfxSocketInit())
@@ -64,6 +66,7 @@ BOOL CLANTalkApp::InitInstance()
 		return FALSE;
 	}
 
+	bPort =  theApp.InitialNetwork();
 
 	AfxEnableControlContainer();
 
@@ -88,7 +91,7 @@ BOOL CLANTalkApp::InitInstance()
 	currentUserNum = -1;
 	CLANTalkDlg dlg;
 	m_pMainWnd = &dlg;
-	InitialNetwork();
+	
 	//m_pMainWnd->SetTimer(ID_TIMER1, 2000, NULL);
 	INT_PTR nResponse = dlg.DoModal();
 	
@@ -96,11 +99,13 @@ BOOL CLANTalkApp::InitInstance()
 	{
 		// TODO: Place code here to handle when the dialog is
 		//  dismissed with OK
+		
 	}
 	else if (nResponse == IDCANCEL)
 	{
 		// TODO: Place code here to handle when the dialog is
 		//  dismissed with Cancel
+		
 	}
 	else if (nResponse == -1)
 	{
@@ -126,6 +131,7 @@ int CLANTalkApp::InitialNetwork()
 	if (!Mymsg.Create(UDP_PORT, SOCK_DGRAM))
 	{
 		AfxMessageBox(L"Create Port Failed");
+		Mymsg.Close();
 		return 1;
 	}
 	
@@ -216,4 +222,104 @@ int CLANTalkApp::InitialNetwork()
 	//AfxMessageBox(str);
 	return 0;
 }
+
+
+
+int CLANTalkApp::SayHello()
+{
+	UDP_Pack pack;
+	memset(&pack, 0, sizeof(UDP_Pack));
+	pack.nCmd = SEND_ON;
+	unsigned int //broad_ip = theApp.info.ip | (~theApp.info.mask),
+		begin_ip = theApp.info.ip & (theApp.info.mask),
+		mask = theApp.info.mask;
+	//CString BIP = int2ip(broad_ip);
+	//BIP = L"59.66.176.121";
+	int mask_len = 0;
+	unsigned int k = 1 << 31;
+	while ((k & mask) == 0)
+	{
+		k = k >> 1;
+		mask_len++;
+	}
+	
+	
+	
+	memcpy(pack.data, &(theApp.sInfo), sizeof(StrInfo));
+	
+	//BOOL bBroadcast = TRUE;
+	//theApp.Mymsg.SetSockOpt(SO_BROADCAST, (char *)&bBroadcast, sizeof(BOOL));
+	//sockaddr_in local;
+	//int len = sizeof(local);
+	//memset(&local, 0, len);
+	//local.sin_family = AF_INET;
+	//local.sin_port = htons(UDP_PORT);//htons(dwPort);
+	//unsigned int i = 89;
+	unsigned int des_addr = begin_ip;
+	for (unsigned int i = 1;i < (unsigned int)((1 << (mask_len)) - 1);i++)
+	{
+		//des_addr += 1;
+		des_addr += (1 << (32 - mask_len));
+		//local.sin_addr.s_addr = htonl(des_addr);
+		CString p = int2ip(des_addr);
+		//if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), (const SOCKADDR*)&local, len) == SOCKET_ERROR)
+		if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, int2ip(des_addr)) == SOCKET_ERROR)
+		{
+			theApp.Mymsg.GetLastError();
+		}
+	}
+	
+	
+	//theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, BIP);
+	return 0;
+}
+
+
+int CLANTalkApp::ReplyHello(CString desIP)
+{
+	
+	UDP_Pack pack;
+	memset(&pack, 0, sizeof(UDP_Pack));
+	pack.nCmd = SEND_REPLY;
+	memcpy(pack.data, &(theApp.sInfo), sizeof(StrInfo));
+
+	
+	if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, desIP) == SOCKET_ERROR)
+	{
+		theApp.Mymsg.GetLastError();
+	}
+	return 0;
+}
+
+
+int CLANTalkApp::ExitInstance()
+{
+	// TODO: Add your specialized code here and/or call the base class
+	Mymsg.Close();
+	return CWinApp::ExitInstance();
+}
+
+int CLANTalkApp::SendMsg(CString sIP, CString MyMsg)
+{
+	UDP_Pack pack;
+	memset(&pack, 0, sizeof(UDP_Pack));
+	pack.nCmd = SEND_MSG;
+
+	wchar_t * wMsg = MyMsg.GetBuffer(MyMsg.GetLength());
+	UINT16 len = min(DADA_LENGTH - 4, MyMsg.GetLength() * 2);
+
+	memcpy(pack.data + 2, wMsg, len);
+	pack.data[1] = UINT8(len && 0x00ff);
+	pack.data[0] = UINT8((len >> 8) && 0x00ff);
+
+
+	theApp.Mymsg.SendTo(&pack, sizeof(int) + len + 2, UDP_PORT, sIP);
+
+	//unsigned int broad_ip = theApp.info.ip | (~theApp.info.mask);
+	//CString BIP = int2ip(broad_ip);
+	//memcpy(pack.data, &(theApp.sInfo), sizeof(StrInfo));
+	//theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, sIP);
+	return 0;
+}
+
 

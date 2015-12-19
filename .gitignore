@@ -32,3 +32,5 @@ LANTalk.opensdf
 *.aps
 *.suo
 LANTalk.aps
+*.aps
+.vs/LANTalk/v14/.suo

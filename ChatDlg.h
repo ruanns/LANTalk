@@ -3,6 +3,7 @@
 
 #include "ChatEdit.h"
 #include "afxwin.h"
+#
 
 
 
@@ -23,6 +24,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
+	EUser* pCurrentUser;
 	CEdit m_edit;
 	//CRichEditCtrl m_message;
 	CListCtrl m_user;

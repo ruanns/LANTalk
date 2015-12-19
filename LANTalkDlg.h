@@ -4,6 +4,7 @@
 
 #pragma once
 #include "ChatDlg.h"
+#include "LanSelDlg.h"
 #include "ChatToolBar.h"
 
 
@@ -31,12 +32,13 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+	LanSelDlg m_lan;
 	CChatDlg m_chat;
 	CChatToolBar m_tool;
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 public:
-	//int SendMsg(CString sIP, CString MyMsg);
+	int SendMsg(CString sIP, CString MyMsg);
 	void InsertUser(CString UserName, CString HostName, CString IP, CString Mark);
 };

@@ -99,6 +99,10 @@ BOOL CLANTalkDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	m_lan.Create(IDD_LAN_SELECT);
+	m_lan.InitialLanSelList();
+	m_lan.ShowWindow(1);
+	
 	AfxInitRichEdit2();
 	m_chat.Create(IDD_CHAT);
 	m_chat.ShowWindow(1);
@@ -220,6 +224,28 @@ void CLANTalkDlg::OnTimer(UINT_PTR nIDEvent)
 	CDialogEx::OnTimer(nIDEvent);
 }
 
+int CLANTalkDlg::SendMsg(CString sIP, CString MyMsg)
+{
+	UDP_Pack pack;
+	memset(&pack, 0, sizeof(UDP_Pack));
+	pack.nCmd = SEND_MSG;
+
+	wchar_t * wMsg = MyMsg.GetBuffer(MyMsg.GetLength());
+	UINT16 len = min(DADA_LENGTH - 2, MyMsg.GetLength() * 2);
+
+	memcpy(pack.data + 2, wMsg, len);
+	pack.data[1] = UINT8(len && 0x00ff);
+	pack.data[0] = UINT8((len >> 8) && 0x00ff);
+
+
+	theApp.Mymsg.SendTo(&pack, sizeof(int) + len + 2, UDP_PORT, sIP);
+
+	//unsigned int broad_ip = theApp.info.ip | (~theApp.info.mask);
+	//CString BIP = int2ip(broad_ip);
+	//memcpy(pack.data, &(theApp.sInfo), sizeof(StrInfo));
+	//theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, sIP);
+	return 0;
+}
 
 void CLANTalkDlg::InsertUser(CString UserName, CString HostName, CString IP, CString Mark)
 {

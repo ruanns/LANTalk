@@ -48,6 +48,9 @@
     <ClInclude Include="SockMsg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LanSelDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LANTalk.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SockMsg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LanSelDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -119,6 +119,8 @@ BOOL CChatDlg::OnInitDialog()
 	InitialUserList();
 	m_message.SetReadOnly(1);
 
+	pCurrentUser = NULL;
+
 	theApp.SayHello();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -135,7 +137,15 @@ BOOL CChatDlg::OnInitDialog()
 void CChatDlg::OnBnClickedButtonSend()
 {
 	// TODO: 在此添加控件通知?理程序代?
-	CString input,tmpStr;
+	int nSel = m_user.GetSelectedCount() - 1;
+	if (nSel < 0)
+	{
+		AfxMessageBox(L"We haven't find other users until now.");
+		return;
+	}
+	EUser* pUser = &theApp.user[nSel];
+	CString userName = pUser->GetName();
+	CString input, tmpStr;
 	int nLen = GetDlgItemText(IDC_EDIT_INPUT, input);
 	if (nLen <= 0)
 	{
@@ -147,11 +157,15 @@ void CChatDlg::OnBnClickedButtonSend()
 	//Send part
 	CString showStr;
 	CTime time = CTime::GetCurrentTime();
+	tmpStr = time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]"));
+	EMessage msg = EMessage(tmpStr, input, TRUE, TRUE, FALSE);
+	pUser->insertMsg(msg);
+
 	tmpStr.LoadStringW(SEND_MESSAGE_FORMAT);
-	showStr.Format(tmpStr, L"***",time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]")), input);
+	showStr.Format(tmpStr, userName, time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]")), input);
 
 	//Save record
-	
+
 
 	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_SHOW);
 	pEdit->SetSel(pEdit->GetWindowTextLength(), -1);
@@ -170,17 +184,17 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 		return;
 	}
 	else {
-		/*CChatDlg* pDlg = (CChatDlg*)m_user.GetItemData(nSel);
-		pDlg->ShowWindow(IDC_EDIT_INPUT);
-		pDlg->ShowWindow(IDC_EDIT_SHOW);
-		pDlg->ShowWindow(IDC_BUTTON_SEND);
-		//enable other chat button
+		if (NULL == pCurrentUser)
+			pCurrentUser = &theApp.user[nSel];
+		SetDlgItemTextW(IDC_EDIT_SHOW, L"");
+		CString showStr = pCurrentUser->GetAllMessage();
+		m_message.SetWindowText(showStr);
 
-		pDlg->SetForegroundWindow();
-		pDlg->GetDlgItem(IDC_EDIT_INPUT)->SetFocus();*/
-
-
-
+		GetDlgItem(IDC_EDIT_INPUT)->SetFocus();
+		CString tmp;
+		tmp.Format(L"now selected No.%d\r\n %s", nSel, theApp.user[nSel].GetName() + "\t" + theApp.user[nSel].GetIp());
+		AfxMessageBox(tmp);
+		return;
 	}
 	*pResult = 0;
 }

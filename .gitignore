@@ -43,3 +43,5 @@ LANTalk.aps
 >>>>>>> origin/master
 *.filters
 *.suo
+*.ilk
+Debug/LANTalk.log

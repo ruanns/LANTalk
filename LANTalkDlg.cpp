@@ -270,6 +270,7 @@ void CLANTalkDlg::InsertUser(CString UserName, CString HostName, CString IP, CSt
 	pList = m_chat.GetUserListControl();
 	//int nColumnCount = pList->GetHeaderCtrl()->GetItemCount();
 
+	//pList->InsertItem(pos, UserName,0);
 	pList->InsertItem(LVIF_TEXT | LVIF_STATE, pos, UserName,
 		(pos % 2) == 0 ? LVIS_SELECTED : 0, LVIS_SELECTED, 0, 0);
 	pList->SetItemText(pos, 0, UserName);

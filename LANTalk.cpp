@@ -296,6 +296,18 @@ int CLANTalkApp::ExitInstance()
 {
 	// TODO: Add your specialized code here and/or call the base class
 	Mymsg.Close();
+	EMessage *p = NULL;
+	EMessage* tmp = NULL;
+	for (int i = 0; i < currentUserNum; i++)
+	{
+		p = theApp.user[i].GetPmsg();
+		while (p != NULL)
+		{
+			tmp = p->GetNextMsg();
+			delete p;
+			p = tmp;
+		}
+	}
 	return CWinApp::ExitInstance();
 }
 

@@ -62,10 +62,10 @@ CString EUser::GetAllMessage()
 	else {
 		allMsg = L"";
 		EMessage* p = pMsg;
-		EMessage* tmpMsg = NULL;
+		//EMessage* tmpMsg = NULL;
 		EMessage* next = NULL;
 		CString tmpFor, tmpStr;
-		for (UINT i = 0; i <= msgNum && p != NULL; i++)
+		for (UINT i = 1; i <= msgNum && p != NULL; i++)
 		{
 			if (TRUE == p->GetSrMark()) {
 				tmpFor.LoadStringW(SEND_MESSAGE_FORMAT);
@@ -75,8 +75,8 @@ CString EUser::GetAllMessage()
 			}
 			tmpStr.Format(tmpFor, userName, p->GetTime(), p->GetContent());
 			allMsg = allMsg + tmpStr;
-			tmpMsg = p;
-			next = tmpMsg->GetNextMsg();
+			next = p->GetNextMsg();
+			p = next;
 		}
 	}
 
@@ -87,9 +87,16 @@ void EUser::insertMsg(EMessage  _pMsg)
 {
 	if (0 == msgNum)
 	{
-		pMsg = &_pMsg;
+		EMessage* p = new EMessage(_pMsg.GetTime(), _pMsg.GetContent(),
+			_pMsg.GetSrMark(), _pMsg.GetReadMark(), _pMsg.GetBurnMark());
+		pMsg = p;
+		endMsg = p;
 	}
-	endMsg->SetNextMsg(_pMsg);
+	else
+	{
+		endMsg->SetNextMsg(_pMsg);
+		endMsg = endMsg->GetNextMsg();		
+	}
 	msgNum++;
 }
 
@@ -135,7 +142,9 @@ BOOL EMessage::GetBurnMark()
 
 void EMessage::SetNextMsg(EMessage  _pMsg)
 {
-	nextMsg = &_pMsg;
+	EMessage* p = new EMessage(_pMsg.GetTime(), _pMsg.GetContent(),
+		_pMsg.GetSrMark(), _pMsg.GetReadMark(), _pMsg.GetBurnMark());
+	nextMsg = p;
 }
 
 void EMessage::ChangeRmk()
@@ -145,4 +154,5 @@ void EMessage::ChangeRmk()
 
 EMessage::~EMessage()
 {
+
 }

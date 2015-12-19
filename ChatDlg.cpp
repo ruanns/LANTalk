@@ -143,7 +143,12 @@ void CChatDlg::OnBnClickedButtonSend()
 		AfxMessageBox(L"We haven't find other users until now.");
 		return;
 	}
-	EUser* pUser = &theApp.user[nSel];
+	if (NULL == pCurrentUser)
+	{
+		AfxMessageBox(L"Please select a friend to chat.");
+		return;
+	}
+	EUser* pUser = pCurrentUser;
 	CString userName = pUser->GetName();
 	CString input, tmpStr;
 	int nLen = GetDlgItemText(IDC_EDIT_INPUT, input);
@@ -184,8 +189,17 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 		return;
 	}
 	else {
-		if (NULL == pCurrentUser)
+		if (NULL == pCurrentUser ){
 			pCurrentUser = &theApp.user[nSel];
+		}else{
+			if (pCurrentUser->GetIp() != theApp.user[nSel].GetIp()){
+				pCurrentUser = &theApp.user[nSel];
+			}
+			else{
+				return;
+			}
+		}
+				
 		SetDlgItemTextW(IDC_EDIT_SHOW, L"");
 		CString showStr = pCurrentUser->GetAllMessage();
 		m_message.SetWindowText(showStr);

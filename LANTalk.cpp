@@ -66,6 +66,7 @@ BOOL CLANTalkApp::InitInstance()
 		return FALSE;
 	}
 
+	bPort = theApp.InitialNetwork();
 
 	AfxEnableControlContainer();
 

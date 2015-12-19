@@ -99,6 +99,9 @@ BOOL CLANTalkDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	//m_lan.Create(IDD_LAN_SELECT);
+	//m_lan.InitialLanSelList();
+	//m_lan.ShowWindow(1);
 	
 	AfxInitRichEdit2();
 	m_chat.Create(IDD_CHAT);

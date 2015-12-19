@@ -95,6 +95,7 @@ void EUser::insertMsg(EMessage  _pMsg)
 	else
 	{
 		endMsg->SetNextMsg(_pMsg);
+		endMsg = endMsg->GetNextMsg();
 	}
 	msgNum++;
 }

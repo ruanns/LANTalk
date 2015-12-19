@@ -30,3 +30,5 @@
 LANTalk.opensdf
 *.ipch
 *.aps
+*.suo
+LANTalk.aps

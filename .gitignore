@@ -45,3 +45,9 @@ LANTalk.aps
 *.suo
 *.ilk
 Debug/LANTalk.log
+*.suo
+*.pdb
+*.pdb
+Debug/LANTalk.tlog/CL.read.1.tlog
+*.tlog
+Debug/LANTalk.tlog/link.read.1.tlog

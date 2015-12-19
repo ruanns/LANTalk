@@ -55,7 +55,7 @@ UINT EUser::GetMsgNum()
 CString EUser::GetAllMessage()
 {
 	CString allMsg;
-	if (0 == msgNum | NULL == pMsg)
+	if (0 == msgNum || NULL == pMsg)
 	{
 		allMsg = L"";
 	}

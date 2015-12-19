@@ -201,3 +201,21 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 
 
 
+
+
+int CChatDlg::InsertRecMsg(CString ip, CString message)
+{
+	int pos;
+	for (int i = 0; i <= theApp.currentUserNum; i++)
+	{
+		if (ip == theApp.user[i].GetIp()) {
+			pos = i;
+			break;
+		}
+	}
+	CTime time = CTime::GetCurrentTime();
+	CString tmpStr = time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]"));
+	EMessage msg = EMessage(tmpStr, message, FALSE, FALSE, FALSE);
+	theApp.user[pos].insertMsg(msg);
+	return 0;
+}

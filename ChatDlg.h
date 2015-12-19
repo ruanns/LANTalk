@@ -44,4 +44,5 @@ public:
 	afx_msg void OnBnClickedButtonSend();
 	afx_msg void OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult);
 	
+	int InsertRecMsg(CString ip, CString msg);
 };

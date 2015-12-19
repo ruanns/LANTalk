@@ -17,9 +17,9 @@ private:
 	CString time;
 	CString content;
 	EMessage* nextMsg;
-	bool srMark;
-	bool readMark;
-	bool burnMark;
+	bool srMark; //TRUE->SEND FAlSE->RECEIVED
+	bool readMark;//TRUE->HAVE BEEN READ
+	bool burnMark;//FALSE->NOT TO BURN
 };
 
 

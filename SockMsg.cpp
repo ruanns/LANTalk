@@ -117,7 +117,6 @@ void SockMsg::OnReceive(int nErrorCode)
 
 	while (ReceiveFrom(&pack1, sizeof(pack1),sIP,port))
 	{
-		if (pack1.nCmd = SEND_ON)
 		if (pack1.nCmd == SEND_ON)
 		{
 			StrInfo UserInfo;
@@ -131,7 +130,6 @@ void SockMsg::OnReceive(int nErrorCode)
 				theApp.ReplyHello(sIP);
 			break;
 		}
-		if (pack1.nCmd = SEND_REPLY)
 		else if (pack1.nCmd == SEND_REPLY)
 		{
 			StrInfo UserInfo;
@@ -143,13 +141,14 @@ void SockMsg::OnReceive(int nErrorCode)
 			dlg->InsertUser(sName, sPCName, sIP, sMask);
 			break;
 		}
-		if (pack1.nCmd == SEND_MSG)
 		else if (pack1.nCmd == SEND_MSG)
 		{
 			wchar_t * wMsg = (wchar_t *)pack1.data;
 			//UINT16 MsgLen = (UINT16)wMsg[0];
 			CString csMsg(wMsg + 1);
 			//dlg->InserMessage(sIP,csMsg);
+			dlg->GetChatDlg()->InsertRecMsg(sIP, csMsg);
+			break;
 		}
 	}
 

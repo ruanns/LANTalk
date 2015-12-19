@@ -99,10 +99,6 @@ BOOL CLANTalkDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_lan.Create(IDD_LAN_SELECT);
-	m_lan.InitialLanSelList();
-	m_lan.ShowWindow(1);
-
 	AfxInitRichEdit2();
 	m_chat.Create(IDD_CHAT);
 	m_chat.ShowWindow(1);
@@ -195,14 +191,26 @@ void CLANTalkDlg::OnTimer(UINT_PTR nIDEvent)
 	//unsigned int imask = theApp.mask;
 	//unsigned int myip = (theApp.addr)->S_un.S_addr;
 	//unsigned int broad_ip = myip | (~imask);
-	UDP_Pack pack;
-	memset(&pack, 0, sizeof(UDP_Pack));
-	pack.nCmd = SEND_ON;
-	unsigned int broad_ip = theApp.info.ip | (~theApp.info.mask);
-	CString BIP = int2ip(broad_ip);
-	memcpy(pack.data, &(theApp.sInfo), sizeof(StrInfo));
-	//BIP = L"59.66.176.51";
-	theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, BIP);
+	//UDP_Pack pack;
+	//memset(&pack, 0, sizeof(UDP_Pack));
+	//pack.nCmd = SEND_ON;
+	//unsigned int broad_ip = theApp.info.ip | (~theApp.info.mask);
+	//CString BIP = int2ip(broad_ip);
+	//BIP = L"59.66.176.121";
+	//memcpy(pack.data, &(theApp.sInfo), sizeof(StrInfo));
+	//BOOL bBroadcast = TRUE;
+	//theApp.Mymsg.SetSockOpt(SO_BROADCAST, (char *)&bBroadcast, sizeof(BOOL));
+	//sockaddr_in local;
+	//int len = sizeof(local);
+	//memset(&local, 0, len);
+	//local.sin_family = AF_INET;
+	//local.sin_port = htons(UDP_PORT);//htons(dwPort);
+	//local.sin_addr.s_addr = htonl(INADDR_BROADCAST);
+	//if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), (const SOCKADDR*)&local, len) == SOCKET_ERROR)
+	//{
+		//theApp.Mymsg.GetLastError();
+	//}
+	//theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, BIP);
 	//for (int i = 0; i < 16; i++)
 	//{
 		//pack.data[i] = theApp.Name[i];
@@ -212,32 +220,10 @@ void CLANTalkDlg::OnTimer(UINT_PTR nIDEvent)
 	CDialogEx::OnTimer(nIDEvent);
 }
 
-int CLANTalkDlg::SendMsg(CString sIP, CString MyMsg)
-{
-	UDP_Pack pack;
-	memset(&pack, 0, sizeof(UDP_Pack));
-	pack.nCmd = SEND_MSG;
-
-	wchar_t * wMsg = MyMsg.GetBuffer(MyMsg.GetLength());
-	UINT16 len = min(DADA_LENGTH - 2, MyMsg.GetLength() * 2);
-
-	memcpy(pack.data + 2, wMsg, len);
-	pack.data[1] = UINT8(len && 0x00ff);
-	pack.data[0] = UINT8((len >> 8) && 0x00ff);
-
-
-	theApp.Mymsg.SendTo(&pack, sizeof(int) + len + 2, UDP_PORT, sIP);
-	
-	//unsigned int broad_ip = theApp.info.ip | (~theApp.info.mask);
-	//CString BIP = int2ip(broad_ip);
-	//memcpy(pack.data, &(theApp.sInfo), sizeof(StrInfo));
-	//theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, sIP);
-	return 0;
-}
 
 void CLANTalkDlg::InsertUser(CString UserName, CString HostName, CString IP, CString Mark)
 {
- 	if (theApp.currentUserNum >= 0)
+	if (theApp.currentUserNum >= 0)
 	{
 		int i = 0;
 		do
@@ -248,6 +234,7 @@ void CLANTalkDlg::InsertUser(CString UserName, CString HostName, CString IP, CSt
 		} while (i <= theApp.currentUserNum);
 
 	}
+
 	theApp.currentUserNum++;
 	int pos = theApp.currentUserNum;
 	theApp.user[theApp.currentUserNum] = EUser(UserName, HostName, IP, Mark);

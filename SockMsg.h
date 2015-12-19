@@ -28,6 +28,7 @@ enum
 {
 	SEND_ON = 0x12f2,
 	SEND_MSG = 0x12f3,
+	SEND_REPLY = 0x12f4,
 };
 
 unsigned int ip2int(CString mask);

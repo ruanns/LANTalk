@@ -14,15 +14,14 @@
     <ProjectGuid>{57710264-F14C-486C-B4E5-887B725160C3}</ProjectGuid>
     <RootNamespace>LANTalk</RootNamespace>
     <Keyword>MFCProj</Keyword>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -104,7 +103,6 @@
     <ClInclude Include="ChatDlg.h" />
     <ClInclude Include="ChatEdit.h" />
     <ClInclude Include="ChatToolBar.h" />
-    <ClInclude Include="LanSelDlg.h" />
     <ClInclude Include="LANTalk.h" />
     <ClInclude Include="LANTalkDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -117,7 +115,6 @@
     <ClCompile Include="ChatDlg.cpp" />
     <ClCompile Include="ChatEdit.cpp" />
     <ClCompile Include="ChatToolBar.cpp" />
-    <ClCompile Include="LanSelDlg.cpp" />
     <ClCompile Include="LANTalk.cpp" />
     <ClCompile Include="LANTalkDlg.cpp" />
     <ClCompile Include="SockMsg.cpp" />
@@ -133,10 +130,7 @@
     <None Include="res\LANTalk.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon_send.bmp" />
-    <Image Include="icon_send.ico" />
     <Image Include="res\LANTalk.ico" />
-    <Image Include="SEND.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,26 +1,4 @@
 #include "stdafx.h"
-#include "resource.h"
-
-class EMessage {
-public:
-	EMessage(CString _t = L"", CString _m = L"Message", bool _sr = TRUE, bool _read = FALSE, bool _burn = FALSE);
-	CString GetTime();
-	CString GetContent();
-	EMessage* GetNextMsg();
-	BOOL GetSrMark();
-	BOOL GetReadMark();
-	BOOL GetBurnMark();
-	void SetNextMsg(EMessage* _pMsg);
-	void ChangeRmk();
-	~EMessage();
-private:
-	CString time;
-	CString content;
-	EMessage* nextMsg;
-	bool srMark;
-	bool readMark;
-	bool burnMark;
-};
 
 
 class EUser {
@@ -31,19 +9,12 @@ public:
 	CString GetName();
 	CString GetIp();
 	CString GetMark();
-	EMessage* GetPmsg();
-	UINT GetMsgNum();
-	CString GetAllMessage();
-	void insertMsg(EMessage* _pMsg);
 	~EUser() {};
 private:
 	CString userName;
 	CString hostName;
 	CString ipAddress;
 	CString Mark;
-	UINT msgNum;
-	EMessage* pMsg;
-	EMessage* endMsg;
 	//UINT group;
 	//	bool clientMark;
 };
@@ -59,7 +30,18 @@ private:
 };
 
 
-
+class EMessage {
+public:
+	EMessage(CString, bool, bool, bool);
+	void ChangeRmk();
+	~EMessage();
+private:
+	UINT length;
+	CString content;
+	bool burnMark;
+	bool srMark;
+	bool readMark;
+};
 class EFileInfo {
 public:
 private:

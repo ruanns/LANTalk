@@ -87,7 +87,7 @@ CString int2ip(unsigned int imask)
 	sMask[k] = 0;
 
 	char tmp;
-	for (int j = 0; j < (k - 1) / 2; j++)
+	for (int j = 0; j <= (k - 1) / 2; j++)
 	{
 		tmp = sMask[j];
 		sMask[j] = sMask[k - 1 - j];
@@ -126,7 +126,27 @@ void SockMsg::OnReceive(int nErrorCode)
 			CString sMask(UserInfo.mask);
 			CString sIP(UserInfo.ip);
 			dlg->InsertUser(sName, sPCName, sIP, sMask);
+			if (sIP != CString(theApp.sInfo.ip))
+				theApp.ReplyHello(sIP);
 			break;
+		}
+		if (pack1.nCmd = SEND_REPLY)
+		{
+			StrInfo UserInfo;
+			memcpy(&UserInfo, pack1.data, sizeof(UserInfo));
+			CString sName(UserInfo.name);
+			CString sPCName(UserInfo.pc);
+			CString sMask(UserInfo.mask);
+			CString sIP(UserInfo.ip);
+			dlg->InsertUser(sName, sPCName, sIP, sMask);
+			break;
+		}
+		if (pack1.nCmd == SEND_MSG)
+		{
+			wchar_t * wMsg = (wchar_t *)pack1.data;
+			//UINT16 MsgLen = (UINT16)wMsg[0];
+			CString csMsg(wMsg + 1);
+			//dlg->InserMessage(sIP,csMsg);
 		}
 	}
 

@@ -7,6 +7,7 @@
 # Precompiled Headers
 *.gch
 *.pch
+*.sdf
 
 # Compiled Dynamic libraries
 *.so
@@ -26,6 +27,7 @@
 *.exe
 *.out
 *.app
+<<<<<<< HEAD
 *.sdf
 LANTalk.opensdf
 *.ipch
@@ -34,3 +36,9 @@ LANTalk.opensdf
 LANTalk.aps
 *.aps
 .vs/LANTalk/v14/.suo
+=======
+*.opensdf
+LANTalk.aps
+*.suo
+>>>>>>> origin/master
+*.filters

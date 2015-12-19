@@ -23,7 +23,6 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
-	EUser* pCurrentUser;
 	CEdit m_edit;
 	//CRichEditCtrl m_message;
 	CListCtrl m_user;
@@ -31,8 +30,6 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnPaint();
 	
-	EUser* GetCurrentUser();
-	void SetCurrentUser(EUser* _user);
 	int InitialUserList();
 	virtual BOOL OnInitDialog();
 	CListCtrl * GetUserListControl();

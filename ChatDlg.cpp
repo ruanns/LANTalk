@@ -95,22 +95,12 @@ CListCtrl * CChatDlg::GetUserListControl()
 	return &m_user;
 }
 
-EUser * CChatDlg::GetCurrentUser()
-{
-	return pCurrentUser;
-}
-
-void CChatDlg::SetCurrentUser(EUser * _user)
-{
-	pCurrentUser = _user;
-}
-
 int CChatDlg::InitialUserList()
 {
-	m_user.InsertColumn(0, L"USER NAME", LVCFMT_LEFT, 100, -1);
-	m_user.InsertColumn(1, L"HOST NAME", LVCFMT_LEFT, 100, -1);
-	m_user.InsertColumn(2, L"IP ADDRESS", LVCFMT_LEFT, 100, -1);
-	m_user.InsertColumn(3, L"MARK", LVCFMT_LEFT, 100, -1);
+	m_user.InsertColumn(0, L"USER NAME", LVCFMT_LEFT, 150, -1);
+	m_user.InsertColumn(1, L"HOST NAME", LVCFMT_LEFT, 150, -1);
+	m_user.InsertColumn(2, L"IP ADDRESS", LVCFMT_LEFT, 150, -1);
+	m_user.InsertColumn(3, L"MASK", LVCFMT_LEFT, 150, -1);
 	
 	DWORD dwStyle = m_user.GetExtendedStyle();
 	dwStyle |= LVS_EX_FULLROWSELECT; 
@@ -128,11 +118,8 @@ BOOL CChatDlg::OnInitDialog()
 	// TODO:  Add extra initialization here
 	InitialUserList();
 	m_message.SetReadOnly(1);
-	
-	pCurrentUser = NULL;
 
-	
-
+	theApp.SayHello();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -148,14 +135,6 @@ BOOL CChatDlg::OnInitDialog()
 void CChatDlg::OnBnClickedButtonSend()
 {
 	// TODO: 在此添加控件通知?理程序代?
-	int nSel = m_user.GetSelectedCount() -1;
-	if (nSel < 0)
-	{
-		AfxMessageBox(L"We haven't find other users until now.");
-		return;
-	}
-	EUser* pUser = &theApp.user[nSel];
-	CString userName = pUser->GetName();
 	CString input,tmpStr;
 	int nLen = GetDlgItemText(IDC_EDIT_INPUT, input);
 	if (nLen <= 0)
@@ -164,19 +143,16 @@ void CChatDlg::OnBnClickedButtonSend()
 		AfxMessageBox(tmpStr);
 		return;
 	}
-	
+
 	//Send part
 	CString showStr;
 	CTime time = CTime::GetCurrentTime();
-	tmpStr = time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]"));
-	EMessage* pMsg = &EMessage(tmpStr, input, TRUE, TRUE, FALSE);
-	pUser->insertMsg(pMsg);
-	
 	tmpStr.LoadStringW(SEND_MESSAGE_FORMAT);
-	showStr.Format(tmpStr, userName,time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]")),input);
-	
+	showStr.Format(tmpStr, L"***",time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]")), input);
+
 	//Save record
 	
+
 	CEdit* pEdit = (CEdit*)GetDlgItem(IDC_EDIT_SHOW);
 	pEdit->SetSel(pEdit->GetWindowTextLength(), -1);
 	pEdit->ReplaceSel(showStr);
@@ -194,18 +170,14 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 		return;
 	}
 	else {
-		
-		if (NULL == pCurrentUser)
-			pCurrentUser = &theApp.user[nSel];
-		SetDlgItemTextW(IDC_EDIT_SHOW, L"");
-		CString showStr = pCurrentUser->GetAllMessage();
-		m_message.SetWindowText(showStr);
-				
-		GetDlgItem(IDC_EDIT_INPUT)->SetFocus();
-		CString tmp;
-		tmp.Format(L"now selected No.%d\r\n %s", nSel, theApp.user[nSel].GetName() + "\t" + theApp.user[nSel].GetIp());
-		AfxMessageBox(tmp);
-		return;
+		/*CChatDlg* pDlg = (CChatDlg*)m_user.GetItemData(nSel);
+		pDlg->ShowWindow(IDC_EDIT_INPUT);
+		pDlg->ShowWindow(IDC_EDIT_SHOW);
+		pDlg->ShowWindow(IDC_BUTTON_SEND);
+		//enable other chat button
+
+		pDlg->SetForegroundWindow();
+		pDlg->GetDlgItem(IDC_EDIT_INPUT)->SetFocus();*/
 
 
 

@@ -204,6 +204,7 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 		SetDlgItemTextW(IDC_EDIT_SHOW, L"");
 		CString showStr = pCurrentUser->GetAllMessage();
 		m_message.SetWindowText(showStr);
+		m_message.SetSel(-1);
 
 		GetDlgItem(IDC_EDIT_INPUT)->SetFocus();
 		//CString tmp;
@@ -269,5 +270,12 @@ int CChatDlg::InsertRecMsg(CString ip, CString message)
 	CString tmpStr = time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]"));
 	EMessage msg = EMessage(tmpStr, message, FALSE, FALSE, FALSE);
 	theApp.user[pos].insertMsg(msg);
+	//Update 
+	pCurrentUser = &theApp.user[pos];
+	SetDlgItemTextW(IDC_EDIT_SHOW, L"");
+	CString showStr = pCurrentUser->GetAllMessage();
+	m_message.SetWindowText(showStr);
+	m_message.SetSel(-1);
+	m_edit.SetFocus();
 	return 0;
 }

@@ -51,3 +51,8 @@ Debug/LANTalk.log
 Debug/LANTalk.tlog/CL.read.1.tlog
 *.tlog
 Debug/LANTalk.tlog/link.read.1.tlog
+*.log
+Release/LANTalk.ipdb
+*.suo
+Release/LANTalk.ipdb
+*.log

@@ -306,23 +306,24 @@ int CLANTalkApp::ExitInstance()
 	CFile file;
 	BOOL flag = TRUE;
 	msgRecd.LoadStringW(RECORD_FILE_NAME);
-	if (!file.Open(msgRecd, CFile::modeNoTruncate | CFile::modeWrite)) {
+	if (!file.Open(msgRecd, CFile::modeCreate | CFile::modeWrite
+		/*| CFile::typeBinary*/)) {
 		AfxMessageBox(L"Error happens when create the record file.");
 		flag = FALSE;
 	}
 		
-	for (int i = 0; L"0.0.0.0" != theApp.user[i].GetIp(); i++)
+	for (int i = 0; L"0.0.0.0" != theApp.user[i].GetIp() && flag; i++)
 	{
 		//save message record
 		msgRecd = L"";
-		msgRecd.Format(L"-----User Name:%s  Host Name:%s  IP:%s  Mark:%s-----",theApp.user[i].GetName(),
-			theApp.user[i].GetHostName(),theApp.user[i].GetIp(),theApp.user[i].GetMark());
+		msgRecd.Format(L"-----User Name:%s  Host Name:%s  IP:%s  Mark:%s-----",
+			theApp.user[i].GetName(),theApp.user[i].GetHostName(),theApp.user[i].
+			GetIp(),theApp.user[i].GetMark());
 		msgRecd = msgRecd + theApp.user[i].GetAllMessage();
-		wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
-		if (flag)
-		{
-			file.Write(tmpChar,msgRecd.GetLength()*2);
-		}
+		//wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
+		file.SeekToEnd();
+		file.Write(msgRecd, msgRecd.GetLength());
+		//file.Write(tmpChar, msgRecd.GetLength() * 2);
 		//delete msg
 		p = theApp.user[i].GetPmsg();
 		while (p != NULL)
@@ -332,7 +333,9 @@ int CLANTalkApp::ExitInstance()
 			p = tmp;
 		}
 	}
-	file.Flush();
+	if (flag)
+		file.Close();
+
 	return CWinApp::ExitInstance();
 }
 

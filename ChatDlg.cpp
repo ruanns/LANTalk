@@ -122,7 +122,7 @@ BOOL CChatDlg::OnInitDialog()
 	// TODO:  Add extra initialization here
 	InitialUserList();
 	m_message.SetReadOnly(1);
-
+	m_recd = NULL;
 	pCurrentUser = NULL;
 
 	theApp.SayHello();
@@ -251,16 +251,30 @@ int CChatDlg::InsertRecMsg(CString ip, CString message)
 void CChatDlg::OnBnClickedButtonViewrecd()
 {
 	// TODO: 在此添加控件通知?理程序代?
-	m_recd.Create(IDD_RECD_DLG);
-	m_recd.ShowWindow(1);
+	if (NULL != m_recd)
+		delete m_recd;
+	m_recd = new CRecdViewDlg;
+	if (NULL != m_recd) {
+		BOOL flag = m_recd->Create(IDD_RECD_DLG, this);
+		if (!flag)
+			AfxMessageBox(L"Error creating Dialog");
+		m_recd->ShowWindow(SW_SHOW);
+	}
+	else {
+		AfxMessageBox(L"Error creating Dialog Object");
+	}
+
 	CFile file;
 	CString name;
 	name.LoadStringW(RECORD_FILE_NAME);
-	if (file.Open(name, CFile::modeRead | CFile::modeNoTruncate)) {
+	if (file.Open(name, CFile::modeRead | CFile::modeCreate
+		/*| CFile::typeBinary*/)) {
 		void * p = new wchar_t[file.GetLength()] ;
 		file.Read( p,file.GetLength());
 		CString recd((wchar_t *)p);
-		m_recd.m_static.SetWindowTextW(recd);
+		if (L"" == recd)
+			recd = L"There is no record available.";
+		m_recd->m_viewRecd.SetWindowTextW(recd);
 	}
 	file.Close();
 }

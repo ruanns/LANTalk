@@ -57,3 +57,6 @@ Release/LANTalk.ipdb
 Release/LANTalk.ipdb
 *.log
 *.log
+*.log
+*.pdb
+*.dat

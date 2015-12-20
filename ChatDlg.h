@@ -37,7 +37,7 @@ public:
 	CListCtrl * GetUserListControl();
 	
 protected:
-	CRecdViewDlg m_recd;
+	CRecdViewDlg* m_recd;
 	CEdit m_message;
 	CButton m_button;
 	//CChatToolBar m_tool;

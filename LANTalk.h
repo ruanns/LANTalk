@@ -45,8 +45,9 @@ public:
 	SockMsg Mymsg;
 	EUser user[MAX_USER_NUM];
 	int currentUserNum;
-
-	UINT lanSel;
+	int totalNum;
+	int listMap[MAX_USER_NUM];
+	int netMode;
 
 	int bPort;
 

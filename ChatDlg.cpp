@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP(CChatDlg, CDialog)
 	ON_WM_PAINT()
 	ON_BN_CLICKED(IDC_BUTTON_SEND, &CChatDlg::OnBnClickedButtonSend)
 	ON_NOTIFY(NM_CLICK, IDC_LIST_USER, &CChatDlg::OnNMClickListUser)
+	ON_BN_CLICKED(IDC_BUTTON_VIEWRECD, &CChatDlg::OnBnClickedButtonViewrecd)
 END_MESSAGE_MAP()
 
 
@@ -81,6 +82,9 @@ void CChatDlg::OnPaint()
 	CWnd * cWnd = GetDlgItem(IDC_BUTTON_SEND);
 	if (cWnd)
 		cWnd->SetWindowPos(NULL, cx - 70, cy - 30, 70, 30, SWP_NOZORDER);
+	cWnd = GetDlgItem(IDC_BUTTON_VIEWRECD);
+	if (cWnd)
+		cWnd->SetWindowPos(NULL, cx - 180, cy - 30, 80, 30, SWP_NOZORDER);
 	//cWnd = GetDlgItem(IDC_STATIC_CHAT);
 	//if (cWnd)
 	   // cWnd->SetWindowPos(NULL, cx * 2 / 5, cy * 4 / 7 - 4, cx * 3 / 5, cy * 3 / 7 + 4,SWP_NOZORDER);
@@ -189,6 +193,7 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 		return;
 	}
 	else {
+		nSel = theApp.listMap[nSel];
 		if (NULL == pCurrentUser){
 			pCurrentUser = &theApp.user[nSel];
 		}
@@ -216,53 +221,15 @@ void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
 
 }
 
-/*
-void CChatDlg::OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: 在此添加控件通知?理程序代?
-	int nSel = pNMItemActivate->iItem;
-	if (nSel < 0)
-	{ 
-		return;
-	}
-	else {
-		if (NULL == pCurrentUser){
-			pCurrentUser = &theApp.user[nSel];
-		}
-		else{
-			if (pCurrentUser->GetIp() != theApp.user[nSel].GetIp()){
-				pCurrentUser = &theApp.user[nSel];
-			}
-			else{
-				return;
-			}
-
-		}
-		SetDlgItemTextW(IDC_EDIT_SHOW, L"");
-		//CString showStr = pCurrentUser->GetAllMessage();
-		//m_message.SetWindowText(showStr);
-
-		GetDlgItem(IDC_EDIT_INPUT)->SetFocus();
-		CString tmp;
-		tmp.Format(L"now selected No.%d\r\n %s", nSel, theApp.user[nSel].GetName() + "\t" + theApp.user[nSel].GetIp());
-		AfxMessageBox(tmp);
-		return;
-	}
-	*pResult = 0;
-}*/
-
-
-
-
 
 int CChatDlg::InsertRecMsg(CString ip, CString message)
 {
-	int pos;
+	int pos, n;
 	for (int i = 0; i <= theApp.currentUserNum; i++)
 	{
-		if (ip == theApp.user[i].GetIp()) {
-			pos = i;
+		n = theApp.listMap[i];
+		if (ip == theApp.user[n].GetIp()) {
+			pos = n;
 			break;
 		}
 	}
@@ -278,4 +245,22 @@ int CChatDlg::InsertRecMsg(CString ip, CString message)
 	m_message.SetSel(-1);
 	m_edit.SetFocus();
 	return 0;
+}
+
+
+void CChatDlg::OnBnClickedButtonViewrecd()
+{
+	// TODO: 在此添加控件通知?理程序代?
+	m_recd.Create(IDD_RECD_DLG);
+	m_recd.ShowWindow(1);
+	CFile file;
+	CString name;
+	name.LoadStringW(RECORD_FILE_NAME);
+	if (file.Open(name, CFile::modeRead | CFile::modeNoTruncate)) {
+		void * p = new wchar_t[file.GetLength()] ;
+		file.Read( p,file.GetLength());
+		CString recd((wchar_t *)p);
+		m_recd.m_static.SetWindowTextW(recd);
+	}
+	file.Close();
 }

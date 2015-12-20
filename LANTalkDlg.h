@@ -32,6 +32,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
 	LanSelDlg m_lan;
 	CChatDlg m_chat;
 	CChatToolBar m_tool;
@@ -43,4 +44,5 @@ public:
 	void InsertUser(CString UserName, CString HostName, CString IP, CString Mark);
 	CChatDlg * GetChatDlg();
 
+	int deleteUser(CString ip);
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include "afxcmn.h"
-
+#include "RecdViewDlg.h"
 #include "ChatEdit.h"
 #include "afxwin.h"
 #
@@ -37,7 +37,9 @@ public:
 	CListCtrl * GetUserListControl();
 	
 protected:
+	CRecdViewDlg m_recd;
 	CEdit m_message;
+	CButton m_button;
 	//CChatToolBar m_tool;
 public:
 //	int InitialtToolBar();
@@ -45,4 +47,5 @@ public:
 	afx_msg void OnNMClickListUser(NMHDR *pNMHDR, LRESULT *pResult);
 	
 	int InsertRecMsg(CString ip, CString msg);
+	afx_msg void OnBnClickedButtonViewrecd();
 };

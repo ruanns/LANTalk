@@ -1,9 +1,9 @@
-﻿生成启动时间为 2015/12/20 上午 10:21:43。
+﻿生成启动时间为 2015/12/20 下午 03:07:46。
      1>项目“C:\Users\rns\Documents\GitHub\LANTalk\LANTalk.vcxproj”在节点 2 上(Rebuild 个目标)。
      1>ClCompile:
-         D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"Release\LANTalk.pch" /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yc"stdafx.h" /Fp"Release\LANTalk.pch" /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
          stdafx.cpp
-         D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"Release\LANTalk.pch" /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt basicClass.cpp ChatDlg.cpp ChatEdit.cpp ChatToolBar.cpp LanSelDlg.cpp LANTalk.cpp LANTalkDlg.cpp SockMsg.cpp
+         D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D _WINDOWS /D NDEBUG /D _UNICODE /D UNICODE /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Yu"stdafx.h" /Fp"Release\LANTalk.pch" /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt basicClass.cpp ChatDlg.cpp ChatEdit.cpp ChatToolBar.cpp LanSelDlg.cpp LANTalk.cpp LANTalkDlg.cpp SockMsg.cpp
          basicClass.cpp
      1>basicClass.cpp(91): warning C4800: “BOOL”: 将值强制为布尔值“true”或“false”(性能警告)
      1>basicClass.cpp(146): warning C4800: “BOOL”: 将值强制为布尔值“true”或“false”(性能警告)
@@ -12,12 +12,12 @@
          ChatToolBar.cpp
          LanSelDlg.cpp
          LANTalk.cpp
-     1>LANTalk.cpp(147): warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+     1>LANTalk.cpp(151): warning C4996: 'gethostbyname': Use getaddrinfo() or GetAddrInfoW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
          C:\Program Files (x86)\Windows Kits\8.1\Include\um\winsock2.h(2238): note: 参见“gethostbyname”的声明
          LANTalkDlg.cpp
          SockMsg.cpp
        ResourceCompile:
-         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D NDEBUG /D _UNICODE /D UNICODE /D _AFXDLL /l"0x0409" /IRelease\ /nologo /fo"Release\LANTalk.res" LANTalk.rc 
+         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe /D NDEBUG /D _UNICODE /D UNICODE /l"0x0409" /IRelease\ /nologo /fo"Release\LANTalk.res" LANTalk.rc 
        Link:
          D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\rns\Documents\GitHub\LANTalk\Release\LANTalk.exe" /INCREMENTAL:NO /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\Include\Manifest\dpiaware.manifest" /Debug /PDB:"C:\Users\rns\Documents\GitHub\LANTalk\Release\LANTalk.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG:incremental /TLBID:1 /ENTRY:"wWinMainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\rns\Documents\GitHub\LANTalk\Release\LANTalk.lib" /MACHINE:X86 /SAFESEH Release\LANTalk.res
          Release\basicClass.obj
@@ -30,11 +30,11 @@
          Release\SockMsg.obj
          Release\stdafx.obj
          正在生成代码
-         All 288 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+         All 363 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
          已完成代码的生成
          LANTalk.vcxproj -> C:\Users\rns\Documents\GitHub\LANTalk\Release\LANTalk.exe
      1>已完成生成项目“C:\Users\rns\Documents\GitHub\LANTalk\LANTalk.vcxproj”(Rebuild 个目标)的操作。
 
 已成功生成。
 
-已用时间 00:00:03.20
+已用时间 00:00:16.49

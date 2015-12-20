@@ -99,9 +99,9 @@ BOOL CLANTalkDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	//m_lan.Create(IDD_LAN_SELECT);
-	//m_lan.InitialLanSelList();
-	//m_lan.ShowWindow(1);
+	m_lan.Create(IDD_LAN_SELECT);
+	m_lan.InitialLanSelList();
+	m_lan.ShowWindow(1);
 	
 	AfxInitRichEdit2();
 	m_chat.Create(IDD_CHAT);
@@ -253,25 +253,53 @@ int CLANTalkDlg::SendMsg(CString sIP, CString MyMsg)
 
 void CLANTalkDlg::InsertUser(CString UserName, CString HostName, CString IP, CString Mark)
 {
-	if (theApp.currentUserNum >= 0)
-	{
-		int i = 0;
-		do
-		{
-			if (IP == theApp.user[i].GetIp())
-				return;
-			i++;
-		} while (i <= theApp.currentUserNum);
-
+	if (L"" == UserName || L"" == HostName || L"" == IP || L"" == Mark) {
+		AfxMessageBox(L"Error happened when inserting a user into the user-list.");
+		return;
 	}
-
-	theApp.currentUserNum++;
-	int pos = theApp.currentUserNum;
-	theApp.user[theApp.currentUserNum] = EUser(UserName, HostName, IP, Mark);
-
+	int pos = -1;
+	if (theApp.totalNum >= 0){
+		int i = 0;
+		do{
+			if (IP == theApp.user[i].GetIp()){
+				pos = i;
+				break;
+			}
+			i++;
+		} while (i <= theApp.totalNum);
+	}
+	//this is a new user
+	if (-1 == pos) {
+		theApp.currentUserNum++;
+		theApp.totalNum++;
+		int n = theApp.currentUserNum;
+		theApp.listMap[n] = theApp.totalNum;
+		theApp.user[theApp.totalNum] = EUser(UserName, HostName, IP, Mark);
+	}
+	else {
+		if (theApp.currentUserNum >= 0) {
+			int i = 0;
+			BOOL isInList = FALSE;//is in the  user-list showed
+			do {
+				if (IP == theApp.user[theApp.listMap[i]].GetIp()) {
+					isInList = TRUE;
+					break;
+				}
+				i++;
+			} while (i <= theApp.currentUserNum);
+			if (isInList) {
+				return;
+			}
+		}
+		theApp.currentUserNum++;
+		int n = theApp.currentUserNum;
+		theApp.listMap[n] = pos;
+	}		
+	
 	//CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_LIST_USER);
 	CListCtrl *pList;
 	pList = m_chat.GetUserListControl();
+	pos = theApp.currentUserNum;//
 	//int nColumnCount = pList->GetHeaderCtrl()->GetItemCount();
 
 	pList->InsertItem(LVIF_TEXT | LVIF_STATE, pos, UserName,
@@ -281,4 +309,25 @@ void CLANTalkDlg::InsertUser(CString UserName, CString HostName, CString IP, CSt
 	pList->SetItemText(pos, 2, IP);
 	pList->SetItemText(pos, 3, Mark);
 	pList = NULL;
+}
+
+int CLANTalkDlg::deleteUser(CString ip)
+{
+	if (L"" != ip && theApp.currentUserNum >= 0) {
+		int pos = -1;
+		for (int i = 0; i <= theApp.currentUserNum; i++) {
+			if(ip == theApp.user[theApp.listMap[i]].GetIp()){
+				for (int j = i; j <= theApp.currentUserNum; j++) {
+					if (MAX_USER_NUM - 1 == j) {
+						theApp.listMap[j] = -1;
+					}
+					else {
+						theApp.listMap[j] = theApp.listMap[j + 1];
+					}					
+				}
+				theApp.currentUserNum--;
+			}
+		}
+	}
+	return 0;
 }

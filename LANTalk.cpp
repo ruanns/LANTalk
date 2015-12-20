@@ -306,8 +306,9 @@ int CLANTalkApp::ExitInstance()
 	CFile file;
 	BOOL flag = TRUE;
 	msgRecd.LoadStringW(RECORD_FILE_NAME);
-	if (!file.Open(msgRecd, CFile::modeCreate | CFile::modeWrite
-		/*| CFile::typeBinary*/)) {
+	if (!file.Open(msgRecd, CFile::modeWrite
+		| CFile::typeBinary) )
+	{
 		AfxMessageBox(L"Error happens when create the record file.");
 		flag = FALSE;
 	}
@@ -320,10 +321,10 @@ int CLANTalkApp::ExitInstance()
 			theApp.user[i].GetName(),theApp.user[i].GetHostName(),theApp.user[i].
 			GetIp(),theApp.user[i].GetMark());
 		msgRecd = msgRecd + theApp.user[i].GetAllMessage();
-		//wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
+		wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
 		file.SeekToEnd();
-		file.Write(msgRecd, msgRecd.GetLength());
-		//file.Write(tmpChar, msgRecd.GetLength() * 2);
+		//file.Write(msgRecd, msgRecd.GetLength()*2);
+		file.Write(tmpChar, msgRecd.GetLength() * 2);
 		//delete msg
 		p = theApp.user[i].GetPmsg();
 		while (p != NULL)

@@ -267,11 +267,11 @@ void CChatDlg::OnBnClickedButtonViewrecd()
 	CFile file;
 	CString name;
 	name.LoadStringW(RECORD_FILE_NAME);
-	if (file.Open(name, CFile::modeRead | CFile::modeCreate
-		/*| CFile::typeBinary*/)) {
-		void * p = new wchar_t[file.GetLength()] ;
-		file.Read( p,file.GetLength());
-		CString recd((wchar_t *)p);
+	if (file.Open(name, CFile::modeRead //| CFile::modeCreate //| CFile::typeBinary
+		| CFile::typeBinary)) {
+		wchar_t * p = new  wchar_t[file.GetLength()] ;
+		file.Read((void *) p,file.GetLength());
+		CString recd(p);
 		if (L"" == recd)
 			recd = L"There is no record available.";
 		m_recd->m_viewRecd.SetWindowTextW(recd);

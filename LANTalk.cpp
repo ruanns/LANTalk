@@ -234,6 +234,7 @@ int CLANTalkApp::SayHello()
 	UDP_Pack pack;
 	memset(&pack, 0, sizeof(UDP_Pack));
 	pack.nCmd = SEND_ON;
+	pack.dataLen = sizeof(StrInfo);
 	unsigned int //broad_ip = theApp.info.ip | (~theApp.info.mask),
 		begin_ip = theApp.info.ip & (theApp.info.mask),
 		mask = theApp.info.mask;
@@ -267,7 +268,7 @@ int CLANTalkApp::SayHello()
 		//local.sin_addr.s_addr = htonl(des_addr);
 		CString p = int2ip(des_addr);
 		//if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), (const SOCKADDR*)&local, len) == SOCKET_ERROR)
-		if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, int2ip(des_addr)) == SOCKET_ERROR)
+		if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + 2 * sizeof(int), UDP_PORT, int2ip(des_addr)) == SOCKET_ERROR)
 		{
 			theApp.Mymsg.GetLastError();
 		}
@@ -285,10 +286,11 @@ int CLANTalkApp::ReplyHello(CString desIP)
 	UDP_Pack pack;
 	memset(&pack, 0, sizeof(UDP_Pack));
 	pack.nCmd = SEND_REPLY;
+	pack.dataLen = sizeof(StrInfo);
 	memcpy(pack.data, &(theApp.sInfo), sizeof(StrInfo));
 
 	
-	if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, desIP) == SOCKET_ERROR)
+	if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + 2 * sizeof(int), UDP_PORT, desIP) == SOCKET_ERROR)
 	{
 		theApp.Mymsg.GetLastError();
 	}
@@ -300,6 +302,7 @@ int CLANTalkApp::ExitInstance()
 {
 	// TODO: Add your specialized code here and/or call the base class
 	Mymsg.Close();
+	m_listen.Close();
 	EMessage *p = NULL;
 	EMessage* tmp = NULL;
 	CString msgRecd;
@@ -347,14 +350,15 @@ int CLANTalkApp::SendMsg(CString sIP, CString MyMsg)
 	pack.nCmd = SEND_MSG;
 
 	wchar_t * wMsg = MyMsg.GetBuffer(MyMsg.GetLength());
-	UINT16 len = min(DADA_LENGTH - 4, MyMsg.GetLength() * 2);
+	UINT16 len = min(DADA_LENGTH - 2, MyMsg.GetLength() * 2);
 
-	memcpy(pack.data + 2, wMsg, len);
-	pack.data[1] = UINT8(len && 0x00ff);
-	pack.data[0] = UINT8((len >> 8) && 0x00ff);
+	memcpy(pack.data, wMsg, len);
+	pack.dataLen = len;
+	//pack.data[1] = UINT8(len && 0x00ff);
+	//pack.data[0] = UINT8((len >> 8) && 0x00ff);
 
 
-	theApp.Mymsg.SendTo(&pack, sizeof(int) + len + 2, UDP_PORT, sIP);
+	theApp.Mymsg.SendTo(&pack, 2 * sizeof(int) + len, UDP_PORT, sIP);
 
 	//unsigned int broad_ip = theApp.info.ip | (~theApp.info.mask);
 	//CString BIP = int2ip(broad_ip);
@@ -364,3 +368,23 @@ int CLANTalkApp::SendMsg(CString sIP, CString MyMsg)
 }
 
 
+
+
+int CLANTalkApp::CreateListenSocket()
+{
+	if (m_listen.Create(TCP_PORT))
+		m_listen.Listen();
+	return 0;
+}
+
+
+int CLANTalkApp::GetUseFulID()
+{
+	return 0;
+}
+
+
+int CLANTalkApp::NewID()
+{
+	return 0;
+}

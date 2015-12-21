@@ -14,6 +14,7 @@
 
 #include "SockMsg.h"
 #include "basicClass.h"
+#include "ListenSocket.h"
 
 #define MAX_USER_NUM 256
 
@@ -58,6 +59,10 @@ public:
 	int SendMsg(CString sIP, CString MyMsg);
 	virtual int ExitInstance();
 	//int SendMessage();
+	CListenSocket m_listen;
+	int CreateListenSocket();
+	int GetUseFulID();
+	int NewID();
 };
 
 extern CLANTalkApp theApp;

@@ -8,6 +8,7 @@
 struct UDP_Pack
 {
 	int nCmd;
+	int dataLen;
 	char data[DADA_LENGTH];
 };
 

@@ -45,4 +45,5 @@ public:
 	CChatDlg * GetChatDlg();
 
 	int deleteUser(CString ip);
+	int AcceptFile(CString FileName, CString FileLength, CString FrmIP, int & nID,CFile &);
 };

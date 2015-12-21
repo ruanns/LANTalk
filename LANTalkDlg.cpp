@@ -108,6 +108,8 @@ BOOL CLANTalkDlg::OnInitDialog()
 	m_chat.ShowWindow(1);
 	SetTimer(ID_TIMER1, 10000, NULL);
 
+	theApp.CreateListenSocket();
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -329,5 +331,12 @@ int CLANTalkDlg::deleteUser(CString ip)
 			}
 		}
 	}
+	return 0;
+}
+
+
+int CLANTalkDlg::AcceptFile(CString FileName, CString FileLength, CString FrmIP,int & nID,CFile & file)
+{
+
 	return 0;
 }

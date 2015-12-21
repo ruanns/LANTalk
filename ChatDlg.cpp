@@ -267,8 +267,7 @@ void CChatDlg::OnBnClickedButtonViewrecd()
 	CFile file;
 	CString name;
 	name.LoadStringW(RECORD_FILE_NAME);
-	if (file.Open(name, CFile::modeRead //| CFile::modeCreate //| CFile::typeBinary
-		| CFile::typeBinary)) {
+	if (file.Open(name, CFile::modeRead | CFile::typeBinary)) {
 		wchar_t * p = new  wchar_t[file.GetLength()] ;
 		file.Read((void *) p,file.GetLength());
 		CString recd(p);

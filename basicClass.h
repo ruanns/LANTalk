@@ -51,17 +51,45 @@ class EUserList {
 public:
 	EUserList() {};
 	~EUserList() {};
-
 private:
 	UINT number;
 	EUser* Start;
 	EUser* Next;
 };
 
-
-
-class EFileInfo {
+class EFile {
 public:
+	EFile(CString _filePath = L"", CString _title = L"", double _p = 0, BOOL _send = TRUE);
+	~EFile();
+	void SetProgress(double p);
+	void SetNextFile(EFile* file);
+	void SetId(int id);
+	int GetId();
+	CString GetIp();
+	CString GetPath();
+	CString GetFileTitle();
+	double GetProgress();
+	EFile* GetNextFile();
+protected:
+	int ID;//unique id number
+	CString IP;
+	CString filePath;//full path
+	CString fileTitle;
+	double progress;
+	BOOL sendMrk;//TRUE-> SEND; FALSE->RECEIVE;
+	EFile * next;
+};
+
+class EFileList {
+public:
+	EFileList();
+	void InsertToList(EFile file);
+	void DeleteFromList(CString path);
+	~EFileList();
 private:
+	UINT listLen;
+	EFile* head;
+	EFile* end;
 
 };
+

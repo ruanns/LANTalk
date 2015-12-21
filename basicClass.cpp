@@ -156,3 +156,108 @@ EMessage::~EMessage()
 {
 
 }
+
+EFileList::EFileList()
+{
+	listLen = 0;
+	head = NULL;
+	end = NULL;
+}
+
+void EFileList::InsertToList(EFile file)
+{
+	EFile* p = new EFile(file);
+	if (0 == listLen){
+		p->SetId(0);
+		head = p;
+		end = head;
+		listLen++;
+	}
+	else {
+		p->SetId(end->GetId() + 1);//make ID unique
+		end->SetNextFile(p);
+		end = end->GetNextFile();
+		listLen++;
+	}
+
+}
+
+void EFileList::DeleteFromList(CString path)
+{
+	EFile * p = head;
+	EFile * tmp;
+	if (listLen > 0 && p !=NULL) {
+		for (; p != NULL;) {
+			tmp = p;
+			if (path == p->GetPath()) {
+				tmp ->SetNextFile(p->GetNextFile());
+				delete p;
+				listLen--;
+				break;
+			}
+		}
+	}
+}
+
+EFileList::~EFileList()
+{
+}
+
+EFile::EFile( CString _filePath, CString _title, double _p, BOOL _send)
+{
+	ID = 0;
+	filePath = _filePath;
+	fileTitle = _title;
+	progress = _p;
+	sendMrk = _send;
+	next = NULL;
+}
+
+EFile::~EFile()
+{
+}
+
+void EFile::SetProgress(double p)
+{
+	progress = p;
+}
+
+void EFile::SetNextFile(EFile* file)
+{
+	next = file;
+}
+
+void EFile::SetId(int id)
+{
+	ID = id;
+}
+
+int EFile::GetId()
+{
+	return ID;
+}
+
+CString EFile::GetIp()
+{
+	return CString(IP);
+}
+
+CString EFile::GetPath()
+{
+	return CString(filePath);
+}
+
+CString EFile::GetFileTitle()
+{
+	return CString(fileTitle);
+}
+
+double EFile::GetProgress()
+{
+	return progress;
+}
+
+EFile * EFile::GetNextFile()
+{
+	return next;
+}

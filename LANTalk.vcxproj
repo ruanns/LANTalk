@@ -104,9 +104,11 @@
     <ClInclude Include="ChatDlg.h" />
     <ClInclude Include="ChatEdit.h" />
     <ClInclude Include="ChatToolBar.h" />
+    <ClInclude Include="ClientSocket.h" />
     <ClInclude Include="LanSelDlg.h" />
     <ClInclude Include="LANTalk.h" />
     <ClInclude Include="LANTalkDlg.h" />
+    <ClInclude Include="ListenSocket.h" />
     <ClInclude Include="RecdViewDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SockMsg.h" />
@@ -118,9 +120,11 @@
     <ClCompile Include="ChatDlg.cpp" />
     <ClCompile Include="ChatEdit.cpp" />
     <ClCompile Include="ChatToolBar.cpp" />
+    <ClCompile Include="ClientSocket.cpp" />
     <ClCompile Include="LanSelDlg.cpp" />
     <ClCompile Include="LANTalk.cpp" />
     <ClCompile Include="LANTalkDlg.cpp" />
+    <ClCompile Include="ListenSocket.cpp" />
     <ClCompile Include="RecdViewDlg.cpp" />
     <ClCompile Include="SockMsg.cpp" />
     <ClCompile Include="stdafx.cpp">

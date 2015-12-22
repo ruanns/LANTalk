@@ -49,6 +49,7 @@ END_MESSAGE_MAP()
 
 CLANTalkDlg::CLANTalkDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CLANTalkDlg::IDD, pParent)
+	//, SelectedAdapter(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -116,12 +117,23 @@ BOOL CLANTalkDlg::OnInitDialog()
 	
 	//m_lan.DoModal();// Bug!
 
+	//theApp.bPort = InitialNetwork();
+
 	AfxInitRichEdit2();
 	m_chat.Create(IDD_CHAT);
 	m_chat.ShowWindow(1);
 	SetTimer(ID_TIMER1, 10000, NULL);
 
-	theApp.CreateListenSocket();
+	
+	//lanSel.Create(IDD_LAN_SELECT);
+	//lanSel.InitialLanSelList();
+	//for (int i = 0; i < iNum; i++) {
+		//	lanSel.insertLanmode(szNameAdapter[i], szIP[i], szMask[i]);
+	//}
+	////lanSel.ShowWindow(SW_SHOW);
+   //LanSelDlg lanSel;
+   //lanSel.DoModal();
+	
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

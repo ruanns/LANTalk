@@ -128,8 +128,11 @@ BOOL CChatDlg::OnInitDialog()
 	m_message.SetReadOnly(1);
 	m_recd = NULL;
 	pCurrentUser = NULL;
-
+	theApp.InitialNetwork();
 	theApp.SayHello();
+	
+
+	theApp.CreateListenSocket();
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
 }

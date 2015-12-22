@@ -14,7 +14,7 @@ class CChatDlg : public CDialog
 	DECLARE_DYNAMIC(CChatDlg)
 
 public:
-	CChatDlg(CWnd* pParent = NULL);   // standard constructor
+	CChatDlg(CWnd * pParent = NULL);   // standard constructor
 	virtual ~CChatDlg();
 
 // Dialog Data

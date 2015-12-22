@@ -77,3 +77,6 @@ Debug/vc140.pdb
 *.log
 *.idb
 LANTalk.aps
+*.tlog
+*.idb
+*.tlog

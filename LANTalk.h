@@ -54,7 +54,7 @@ public:
 	EFileList fileList;
 
 public:
-	int InitialNetwork();
+//	int InitialNetwork();
 	int SayHello();
 	int ReplyHello(CString desIP);
 	int SendMsg(CString sIP, CString MyMsg);
@@ -66,6 +66,10 @@ public:
 	int NewID();
 	void SaveMsgRecd();
 	int SelectAdapter(CString* szNameAdapter, CString* szIP, CString* szMask, int iNum);
+	int InitialNetwork();
+public:
+	int iNetUseful;
+	int SelectedAdapter;
 };
 
 extern CLANTalkApp theApp;

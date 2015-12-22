@@ -44,10 +44,14 @@ public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 public:
+	
 	int SendMsg(CString sIP, CString MyMsg);
 	void InsertUser(CString UserName, CString HostName, CString IP, CString Mark);
 	CChatDlg * GetChatDlg();
 
 	int deleteUser(CString ip);
 	FileInfo AcceptFile(CString FileName, CString FileLength, CString FrmIP);
+//	int SelectedAdapter;
 };
+
+

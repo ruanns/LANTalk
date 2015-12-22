@@ -11,6 +11,7 @@
 
 CClientSocket::CClientSocket()
 {
+	uReceivedBlock = 0;
 }
 
 CClientSocket::~CClientSocket()
@@ -44,6 +45,12 @@ void CClientSocket::OnReceive(int nErrorCode)
 		OnSendRequest();
 	case SEND_AGREE:
 		OnSendAgree();
+	case SEND_INFO:
+		OnSendInfo();
+	case SEND_DATA:
+		OnSendData();
+	case SEND_BEGIN:
+		OnSendBegin();
 	default:
 	
 
@@ -59,7 +66,8 @@ int CClientSocket::OnSendRequest()
 	UINT port;
 	CString IP;
 	GetPeerName(IP, port);
-	if (Receive(&tData, sizeof(tcpData) )<= 0)
+	memset(&tData, 0, sizeof(tData));
+	if (Receive(&tData, sizeof(tData)) <= 0)
 		return -1;
 	int * lengthType = (int *)&(tData.data);
 	double * length = (double *)(&(tData.data) + 4);
@@ -71,12 +79,32 @@ int CClientSocket::OnSendRequest()
 	else if (*lengthType == 3)
 		FileLen.Format(L"4.2f %s", length, L"GB");
 	CLANTalkDlg * dlg = (CLANTalkDlg *)AfxGetMainWnd();
-	/*if (dlg->AcceptFile(CString(tData.data + 12), FileLen, IP) == 0)
+	FileInfo Finfo = dlg->AcceptFile(CString((wchar_t *)(tData.data + 12)), FileLen, IP);
+	//tcpData tData1;
+	int iAnswer;
+	int nCmd = SEND_AGREE;
+
+	Send(&nCmd, sizeof(nCmd));
+	if (Finfo.iAccept == 0)
 	{
-		Close();
-		delete this;
+		
+		iAnswer = 1;
+		Send(&iAnswer, sizeof(unsigned int));
+		//tData1.uByte = 1;
+		//Send(& (tData1.uByte), sizeof(unsigned int));
+		//Close();
+		//delete this;
 		return 1;
-	}*/
+	}
+
+	m_File = Finfo.file;
+	nID = Finfo.ID;
+
+	iAnswer = 2;
+	Send(&iAnswer, sizeof(unsigned int));
+
+	//tData1.uByte = 2;
+	//Send(&(tData1.uByte), sizeof(unsigned int));
 	
 	return 0;
 }
@@ -84,12 +112,124 @@ int CClientSocket::OnSendRequest()
 
 int CClientSocket::SendFile()
 {
+	//ULONGLONG length = m_File->GetLength();
+	unsigned int BufferSize = MAX_BLOCK_LENGTH;
+	ULONGLONG rBuffer = uLength % BufferSize;
+	tcpData tData;
+	int nCmd = SEND_DATA;
+	Send(&nCmd, sizeof(int));
+	
+	for (ULONGLONG i = 0; i < uBlock; i++)
+	{
+		if (i != uBlock - 1)
+		{
+			tData.uByte = BufferSize;
+			tData.uBlock = i;
+			m_File->Read(tData.data, BufferSize);
+			Send(&tData, sizeof(tData));		
+		}
+		else
+		{
+			tData.uByte = rBuffer;
+			tData.uBlock = i;
+			m_File->Read(tData.data, rBuffer);
+			Send(&tData, rBuffer + 2 * sizeof(unsigned int));
+		}
+		
+	}
+
+	//m_File->Close();
+	//delete m_File;
 	return 0;
 }
 
 
 int CClientSocket::OnSendAgree()
 {
+	unsigned int iAnswer;
+	Receive(&iAnswer, sizeof(iAnswer));
+	if (iAnswer == 1)
+	{
+		Close();
+		delete this;
+		//return iAnswer;
+	}
+	else if (iAnswer == 2)
+	{
+		//ULONGLONG length = m_File->GetLength();
+		uLength = m_File->GetLength();
+		unsigned int BufferSize = MAX_BLOCK_LENGTH;
+		ULONGLONG nBuffer = uLength / BufferSize + 1;
+		uBlock = nBuffer;
+		//int nCmd = SEND_INFO;
+		int nCmd = SEND_INFO;
+		Send(&nCmd, sizeof(int));
+		Send(&nBuffer, sizeof(uLength));
+
+	}
+	return iAnswer;
+}
+
+
+int CClientSocket::OnSendInfo()
+{
+	//reserve space
+	Receive(&uLength, sizeof(uLength));
+	//uReceivedBlock++;
+	int nCmd = SEND_BEGIN;
+	int buffer_size = MAX_BLOCK_LENGTH;
+	uBlock = uLength / buffer_size;
+	Send(&nCmd, sizeof(nCmd));
+	int Begin = 1;
+	Send(&Begin, sizeof(int));
+	return 0;
+}
+
+
+int CClientSocket::OnSendData()
+{
+	tcpData tData;
+	int buffer_size = MAX_BLOCK_LENGTH;
+	Receive(&tData, sizeof(tData));
+	uReceivedBlock++;
+	m_File->Seek(tData.uBlock * buffer_size, CFile::begin);
+	m_File->Write(tData.data, tData.uByte);
+	if (uReceivedBlock == uBlock)
+	{
+		//if delete?
+		m_File->Close();
+		//Close();
+		//delete this;
+		//return 1;
+	}
 	
+	//m_File->Seek();
+	return 0;
+}
+
+
+int CClientSocket::OnSendBegin()
+{
+	int iBegin;
+	Receive(&iBegin, sizeof(int));
+	if (iBegin == 1)
+		SendFile();
+
+	return 0;
+}
+
+
+int CClientSocket::OnSendEnsure()
+{
+	int iSure;
+	Receive(&iSure, sizeof(iSure));
+	if (iSure == 1)
+		uReceivedBlock++;
+	if (uReceivedBlock == uBlock)
+	{
+		Close();
+		delete this;
+		return 1;
+	}
 	return 0;
 }

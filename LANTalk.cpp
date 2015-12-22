@@ -303,43 +303,9 @@ int CLANTalkApp::ExitInstance()
 	// TODO: Add your specialized code here and/or call the base class
 	Mymsg.Close();
 	m_listen.Close();
-	EMessage *p = NULL;
-	EMessage* tmp = NULL;
-	CString msgRecd;
-	CFile file;
-	BOOL flag = TRUE;
-	msgRecd.LoadStringW(RECORD_FILE_NAME);
-	if (!file.Open(msgRecd, CFile::modeWrite
-		| CFile::typeBinary) )
-	{
-		AfxMessageBox(L"Error happens when create the record file.");
-		flag = FALSE;
-	}
-		
-	for (int i = 0; L"0.0.0.0" != theApp.user[i].GetIp() && flag; i++)
-	{
-		//save message record
-		msgRecd = L"";
-		msgRecd.Format(L"-----User Name:%s  Host Name:%s  IP:%s  Mark:%s-----",
-			theApp.user[i].GetName(),theApp.user[i].GetHostName(),theApp.user[i].
-			GetIp(),theApp.user[i].GetMark());
-		msgRecd = msgRecd + theApp.user[i].GetAllMessage();
-		wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
-		file.SeekToEnd();
-		//file.Write(msgRecd, msgRecd.GetLength()*2);
-		file.Write(tmpChar, msgRecd.GetLength() * 2);
-		//delete msg
-		p = theApp.user[i].GetPmsg();
-		while (p != NULL)
-		{
-			tmp = p->GetNextMsg();
-			delete p;
-			p = tmp;
-		}
-	}
-	if (flag)
-		file.Close();
-
+	
+	SaveMsgRecd();
+	
 	return CWinApp::ExitInstance();
 }
 
@@ -387,4 +353,45 @@ int CLANTalkApp::GetUseFulID()
 int CLANTalkApp::NewID()
 {
 	return 0;
+}
+
+
+void CLANTalkApp::SaveMsgRecd()
+{
+	EMessage *p = NULL;
+	EMessage* tmp = NULL;
+	CString msgRecd;
+	CFile file;
+	BOOL flag = TRUE;
+	msgRecd.LoadStringW(RECORD_FILE_NAME);
+	if (!file.Open(msgRecd, CFile::modeCreate | CFile::modeNoTruncate
+		| CFile::modeWrite | CFile::typeBinary))
+	{
+		AfxMessageBox(L"Error happens when create the record file.");
+		flag = FALSE;
+		return;
+	}
+	
+	for (int i = 0; L"0.0.0.0" != theApp.user[i].GetIp() && flag; i++)
+	{
+		//save message record
+		msgRecd = L"";
+		msgRecd.Format(L"-----User Name:%s  Host Name:%s  IP:%s  Mark:%s-----\r\n",
+			theApp.user[i].GetName(), theApp.user[i].GetHostName(), theApp.user[i].
+			GetIp(), theApp.user[i].GetMark());
+		msgRecd = msgRecd + theApp.user[i].GetMsgRecd();
+		wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
+		file.SeekToEnd();
+		//file.Write(msgRecd, msgRecd.GetLength()*2);
+		file.Write(tmpChar, msgRecd.GetLength() * 2);
+		//delete msg
+		p = theApp.user[i].GetPmsg();
+		while (p != NULL)
+		{
+			tmp = p->GetNextMsg();
+			delete p;
+			p = tmp;
+		}
+	}
+	file.Close();
 }

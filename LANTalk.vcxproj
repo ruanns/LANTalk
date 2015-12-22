@@ -110,6 +110,7 @@
     <ClInclude Include="LANTalkDlg.h" />
     <ClInclude Include="ListenSocket.h" />
     <ClInclude Include="RecdViewDlg.h" />
+    <ClInclude Include="RecvFileDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SockMsg.h" />
     <ClInclude Include="stdafx.h" />
@@ -126,6 +127,7 @@
     <ClCompile Include="LANTalkDlg.cpp" />
     <ClCompile Include="ListenSocket.cpp" />
     <ClCompile Include="RecdViewDlg.cpp" />
+    <ClCompile Include="RecvFileDlg.cpp" />
     <ClCompile Include="SockMsg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

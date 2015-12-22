@@ -3,9 +3,12 @@
 //
 
 #pragma once
+
 #include "ChatDlg.h"
 #include "LanSelDlg.h"
 #include "ChatToolBar.h"
+#include "RecvfileDlg.h"
+#include "RecvFileDlg.h"
 
 
 // CLANTalkDlg dialog
@@ -33,6 +36,7 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
+	CRecvFileDlg m_recvFile;
 	LanSelDlg m_lan;
 	CChatDlg m_chat;
 	CChatToolBar m_tool;
@@ -45,5 +49,5 @@ public:
 	CChatDlg * GetChatDlg();
 
 	int deleteUser(CString ip);
-	int AcceptFile(CString FileName, CString FileLength, CString FrmIP, int & nID,CFile &);
+	FileInfo AcceptFile(CString FileName, CString FileLength, CString FrmIP);
 };

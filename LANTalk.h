@@ -51,6 +51,7 @@ public:
 	int netMode;
 
 	int bPort;
+	EFileList fileList;
 
 public:
 	int InitialNetwork();
@@ -63,6 +64,7 @@ public:
 	int CreateListenSocket();
 	int GetUseFulID();
 	int NewID();
+	void SaveMsgRecd();
 };
 
 extern CLANTalkApp theApp;

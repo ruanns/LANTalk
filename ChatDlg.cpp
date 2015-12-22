@@ -166,12 +166,12 @@ void CChatDlg::OnBnClickedButtonSend()
 	theApp.SendMsg(pUser->GetIp(), input);
 	CString showStr;
 	CTime time = CTime::GetCurrentTime();
-	tmpStr = time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]"));
+	tmpStr = time.Format(_T(" %Y,%B %d, %A %H:%M:%S "));
 	EMessage msg = EMessage(tmpStr, input, TRUE, TRUE, FALSE);
 	pUser->insertMsg(msg);
 
 	tmpStr.LoadStringW(SEND_MESSAGE_FORMAT);
-	showStr.Format(tmpStr, userName, time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]")), input);
+	showStr.Format(tmpStr, userName, time.Format(_T("%Y,%B %d, %A %H:%M:%S ")), input);
 
 	//Save record
 
@@ -234,7 +234,7 @@ int CChatDlg::InsertRecMsg(CString ip, CString message)
 		}
 	}
 	CTime time = CTime::GetCurrentTime();
-	CString tmpStr = time.Format(_T("[%Y,%B %d, %A %H:%M:%S ]"));
+	CString tmpStr = time.Format(_T("%Y,%B %d, %A %H:%M:%S"));
 	EMessage msg = EMessage(tmpStr, message, FALSE, FALSE, FALSE);
 	theApp.user[pos].insertMsg(msg);
 	//Update 
@@ -262,6 +262,7 @@ void CChatDlg::OnBnClickedButtonViewrecd()
 	}
 	else {
 		AfxMessageBox(L"Error creating Dialog Object");
+		return;
 	}
 
 	CFile file;
@@ -272,8 +273,12 @@ void CChatDlg::OnBnClickedButtonViewrecd()
 		file.Read((void *) p,file.GetLength());
 		CString recd(p);
 		if (L"" == recd)
-			recd = L"There is no record available.";
+			recd = L"The record file is still empty";
 		m_recd->m_viewRecd.SetWindowTextW(recd);
+		file.Close();
 	}
-	file.Close();
+	else {
+		AfxMessageBox(L"There is no record file available. ");
+		return;
+	}
 }

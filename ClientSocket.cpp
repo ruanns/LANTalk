@@ -71,12 +71,12 @@ int CClientSocket::OnSendRequest()
 	else if (*lengthType == 3)
 		FileLen.Format(L"4.2f %s", length, L"GB");
 	CLANTalkDlg * dlg = (CLANTalkDlg *)AfxGetMainWnd();
-	if (dlg->AcceptFile(CString(tData.data + 12), FileLen, IP, nID, m_File) == 0)
+	/*if (dlg->AcceptFile(CString(tData.data + 12), FileLen, IP) == 0)
 	{
 		Close();
 		delete this;
 		return 1;
-	}
+	}*/
 	
 	return 0;
 }

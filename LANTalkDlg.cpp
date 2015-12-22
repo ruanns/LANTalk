@@ -99,10 +99,21 @@ BOOL CLANTalkDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	//-----------------Receive file dialog (For debug use)----------
+	m_recvFile.Create(IDD_RECEIVE_FILE);
+	m_recvFile.ShowWindow(SW_SHOW);
+	CString info, fmt;
+	fmt.LoadStringW(RECV_FILE_INFO);
+	info.Format(fmt, L"0.0.0.0", L"123.txt", L"3.87 Mb");
+	info += L" Do you want to accept it?";
+	m_recvFile.SetDlgItemTextW(IDC_FILE_INFO, info);
+	//INT_PTR result = m_recvFile.DoModal();// bug!
+	//-----------------LAN network setting dialog--------------------
 	m_lan.Create(IDD_LAN_SELECT);
 	m_lan.InitialLanSelList();
-	m_lan.ShowWindow(1);
-	
+	m_lan.ShowWindow(SW_SHOW);
+	//m_lan.DoModal();// Bug!
+
 	AfxInitRichEdit2();
 	m_chat.Create(IDD_CHAT);
 	m_chat.ShowWindow(1);
@@ -334,9 +345,38 @@ int CLANTalkDlg::deleteUser(CString ip)
 	return 0;
 }
 
-
-int CLANTalkDlg::AcceptFile(CString FileName, CString FileLength, CString FrmIP,int & nID,CFile & file)
+FileInfo CLANTalkDlg::AcceptFile(CString FileName, CString FileLength, CString FrmIP)
 {
 
-	return 0;
+	CRecvFileDlg recvFile(FileName);
+	recvFile.Create(IDD_RECEIVE_FILE);
+	recvFile.ShowWindow(SW_SHOW);
+	//Set file information in Static 
+	CString info, fmt;
+	fmt.LoadStringW(RECV_FILE_INFO);
+	info.Format(fmt, FrmIP, FileName, FileLength);
+	info += L" Do you want to accept it?";
+	recvFile.SetDlgItemTextW(IDC_FILE_INFO,info);
+	INT_PTR result = recvFile.DoModal();
+
+	FileInfo fInfo;
+	CFile openFile;
+	CString fullPath = recvFile.saveFolderPath + FileName;
+	if (L"" == recvFile.saveFolderPath && openFile.Open(fullPath,CFile::modeCreate | CFile::modeWrite 
+		| CFile::typeBinary)) {
+		EFile file(fullPath, FileName, 0.0, FALSE);
+		theApp.fileList.InsertToList(file);
+		
+		fInfo.ID = file.GetId();
+		fInfo.file = &openFile;
+		fInfo.iAccept = 1;
+	}
+	else {
+		fInfo.ID = -1;
+		fInfo.file = NULL;
+		fInfo.iAccept = 0;
+	}
+	recvFile.CloseWindow();//if necessary ?
+
+	return FileInfo(fInfo);
 }

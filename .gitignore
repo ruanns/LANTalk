@@ -60,3 +60,13 @@ Release/LANTalk.ipdb
 *.log
 *.pdb
 *.dat
+Debug/
+Release/
+*.log
+Debug/LANTalk.tlog/CL.command.1.tlog
+*.tlog
+.vs/LANTalk/v14/.suo
+*.dat
+*.aps
+Debug/vc140.pdb
+*.idb

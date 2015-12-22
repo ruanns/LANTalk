@@ -1,9 +1,14 @@
+#pragma once
+
+
 #include "stdafx.h"
 #include "resource.h"
 
+
 class EMessage {
 public:
-	EMessage(CString _t = L"", CString _m = L"Message", bool _sr = TRUE, bool _read = FALSE, bool _burn = FALSE);
+	EMessage(CString _t = L"", CString _m = L"Message", bool _sr = TRUE, bool _read = FALSE, 
+		bool _burn = FALSE);
 	CString GetTime();
 	CString GetContent();
 	EMessage* GetNextMsg();
@@ -22,7 +27,6 @@ private:
 	bool burnMark;//FALSE->NOT TO BURN
 };
 
-
 class EUser {
 public:
 	EUser(CString _name = L"UserName", CString _hostname = L"hostName", CString _ip = L"0.0.0.0", CString _mark = L"255.255.255.0"/*,UINT _group*/);
@@ -34,6 +38,7 @@ public:
 	EMessage* GetPmsg();
 	UINT GetMsgNum();
 	CString GetAllMessage();
+	CString GetMsgRecd();
 	void insertMsg(EMessage _pMsg);
 	~EUser() {};
 private:
@@ -47,6 +52,7 @@ private:
 	//UINT group;
 	//	bool clientMark;
 };
+
 class EUserList {
 public:
 	EUserList() {};
@@ -70,7 +76,7 @@ public:
 	CString GetFileTitle();
 	double GetProgress();
 	EFile* GetNextFile();
-protected:
+private:
 	int ID;//unique id number
 	CString IP;
 	CString filePath;//full path
@@ -83,6 +89,8 @@ protected:
 class EFileList {
 public:
 	EFileList();
+	UINT GetListLen();
+	EFile * GetHead();
 	void InsertToList(EFile file);
 	void DeleteFromList(CString path);
 	~EFileList();
@@ -90,6 +98,12 @@ private:
 	UINT listLen;
 	EFile* head;
 	EFile* end;
-
 };
 
+
+struct FileInfo
+{
+int ID;
+CFile * file;
+int iAccept;
+};

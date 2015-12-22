@@ -1,13 +1,9 @@
 #include "stdafx.h"
 #include "basicClass.h"
 
-//using namespace std;
-
-
-
 //EUser
 
-EUser::EUser(CString _name, CString _hostname, CString _ip, CString _mark/*, UINT _group = 0*/)
+EUser::EUser(CString _name, CString _hostname, CString _ip, CString _mark)
 {
 	userName = _name;
 	hostName = _hostname;
@@ -81,6 +77,37 @@ CString EUser::GetAllMessage()
 	}
 
 	return CString(allMsg);
+}
+
+CString EUser::GetMsgRecd()
+{
+	CString msgRecd;
+	if (0 == msgNum || NULL == pMsg)
+	{
+		msgRecd = L"";
+	}
+	else {
+		msgRecd = L"";
+		EMessage* p = pMsg;
+		EMessage* next = NULL;
+		CString tmpFor, tmpStr;
+		tmpFor.LoadStringW(SAVE_RECD);
+		for (UINT i = 1; i <= msgNum && p != NULL; i++)
+		{
+			if (TRUE == p->GetSrMark()) {
+				tmpStr.Format(tmpFor, p->GetTime(), L"SENT", p->GetContent());
+			}
+			else {
+				tmpStr.Format(tmpFor, i, p->GetTime(), L"RECEIVED", p->GetContent());
+			}
+			
+			msgRecd = msgRecd + tmpStr;
+			next = p->GetNextMsg();
+			p = next;
+		}
+	}
+
+	return CString(msgRecd);
 }
 
 void EUser::insertMsg(EMessage  _pMsg)
@@ -162,6 +189,16 @@ EFileList::EFileList()
 	listLen = 0;
 	head = NULL;
 	end = NULL;
+}
+
+UINT EFileList::GetListLen()
+{
+	return listLen;
+}
+
+EFile * EFileList::GetHead()
+{
+	return head;
 }
 
 void EFileList::InsertToList(EFile file)

@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CChatDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_SEND, &CChatDlg::OnBnClickedButtonSend)
 	ON_NOTIFY(NM_CLICK, IDC_LIST_USER, &CChatDlg::OnNMClickListUser)
 	ON_BN_CLICKED(IDC_BUTTON_VIEWRECD, &CChatDlg::OnBnClickedButtonViewrecd)
+	ON_BN_CLICKED(IDC_SEND_FILE, &CChatDlg::OnBnClickedSendFile)
 END_MESSAGE_MAP()
 
 
@@ -82,9 +83,12 @@ void CChatDlg::OnPaint()
 	CWnd * cWnd = GetDlgItem(IDC_BUTTON_SEND);
 	if (cWnd)
 		cWnd->SetWindowPos(NULL, cx - 70, cy - 30, 70, 30, SWP_NOZORDER);
+	cWnd = GetDlgItem(IDC_SEND_FILE);
+	if(cWnd)
+		cWnd->SetWindowPos(NULL, cx - 160, cy - 30, 70, 30, SWP_NOZORDER);
 	cWnd = GetDlgItem(IDC_BUTTON_VIEWRECD);
 	if (cWnd)
-		cWnd->SetWindowPos(NULL, cx - 180, cy - 30, 80, 30, SWP_NOZORDER);
+		cWnd->SetWindowPos(NULL, cx - 250, cy - 30, 80, 30, SWP_NOZORDER);
 	//cWnd = GetDlgItem(IDC_STATIC_CHAT);
 	//if (cWnd)
 	   // cWnd->SetWindowPos(NULL, cx * 2 / 5, cy * 4 / 7 - 4, cx * 3 / 5, cy * 3 / 7 + 4,SWP_NOZORDER);
@@ -166,7 +170,7 @@ void CChatDlg::OnBnClickedButtonSend()
 	theApp.SendMsg(pUser->GetIp(), input);
 	CString showStr;
 	CTime time = CTime::GetCurrentTime();
-	tmpStr = time.Format(_T(" %Y,%B %d, %A %H:%M:%S "));
+	tmpStr = time.Format(_T("%Y,%B %d, %A %H:%M:%S"));
 	EMessage msg = EMessage(tmpStr, input, TRUE, TRUE, FALSE);
 	pUser->insertMsg(msg);
 
@@ -279,6 +283,45 @@ void CChatDlg::OnBnClickedButtonViewrecd()
 	}
 	else {
 		AfxMessageBox(L"There is no record file available. ");
+		return;
+	}
+}
+
+
+void CChatDlg::OnBnClickedSendFile()
+{
+	// TODO: 在此添加控件通知?理程序代?
+	if (NULL == pCurrentUser) {
+		AfxMessageBox(L"You Must select a friend to transfer file.");
+		return;
+	}
+	CString filter;
+	CString defaultDir;
+	defaultDir.LoadStringW(DEFAULT_DIR);
+	CFileDialog sendFile(TRUE, defaultDir, L"",
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, filter, NULL);
+	INT_PTR result = sendFile.DoModal();
+	if (IDOK == result) {
+		CString path = sendFile.GetFolderPath();
+		CString fName = sendFile.GetFileName();
+		CFile file;
+		if (file.Open(path + L"\\" + fName, CFile::modeRead | 
+			CFile::typeBinary)) {
+			EFile f(path, fName, 0.0, TRUE);
+			theApp.fileList.InsertToList(f);
+			CTime time = CTime::GetCurrentTime();
+			CString tmpStr = time.Format(_T("%Y,%B %d, %A %H:%M:%S"));
+			CString cont;
+			cont.Format(L"%s <File Location:%s>",fName,path);
+			EMessage msg(tmpStr, cont, TRUE);
+			pCurrentUser->insertMsg(msg);
+			//Transfer part
+			CString toIP = pCurrentUser->GetIp();
+			//AfxMessageBox(path + L"\r\n" + fName);
+			file.Close();
+		};
+	}
+	else {
 		return;
 	}
 }

@@ -29,12 +29,12 @@ private:
 
 class EUser {
 public:
-	EUser(CString _name = L"UserName", CString _hostname = L"hostName", CString _ip = L"0.0.0.0", CString _mark = L"255.255.255.0"/*,UINT _group*/);
+	EUser(CString _name = L"UserName", CString _hostname = L"hostName", CString _ip = L"0.0.0.0", CString _mask = L"255.255.255.0"/*,UINT _group*/);
 	void EditName(CString);
 	CString GetHostName();
 	CString GetName();
 	CString GetIp();
-	CString GetMark();
+	CString GetMask();
 	EMessage* GetPmsg();
 	UINT GetMsgNum();
 	CString GetAllMessage();
@@ -45,7 +45,7 @@ private:
 	CString userName;
 	CString hostName;
 	CString ipAddress;
-	CString Mark;
+	CString Mask;
 	UINT msgNum;
 	EMessage* pMsg;
 	EMessage* endMsg;
@@ -65,7 +65,7 @@ private:
 
 class EFile {
 public:
-	EFile(CString _filePath = L"", CString _title = L"", double _p = 0, BOOL _send = TRUE);
+	EFile(CString _filePath = L"", CString _name = L"", double _p = 0, BOOL _send = TRUE);
 	~EFile();
 	void SetProgress(double p);
 	void SetNextFile(EFile* file);
@@ -73,14 +73,14 @@ public:
 	int GetId();
 	CString GetIp();
 	CString GetPath();
-	CString GetFileTitle();
+	CString GetFileName();
 	double GetProgress();
 	EFile* GetNextFile();
 private:
 	int ID;//unique id number
 	CString IP;
 	CString filePath;//full path
-	CString fileTitle;
+	CString fileName;
 	double progress;
 	BOOL sendMrk;//TRUE-> SEND; FALSE->RECEIVE;
 	EFile * next;

@@ -99,19 +99,21 @@ BOOL CLANTalkDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	//-----------------Receive file dialog (For debug use)----------
-	m_recvFile.Create(IDD_RECEIVE_FILE);
-	m_recvFile.ShowWindow(SW_SHOW);
-	CString info, fmt;
-	fmt.LoadStringW(RECV_FILE_INFO);
-	info.Format(fmt, L"0.0.0.0", L"123.txt", L"3.87 Mb");
-	info += L" Do you want to accept it?";
-	m_recvFile.SetDlgItemTextW(IDC_FILE_INFO, info);
+	//-----------------Receive file dialog (For debug use)-----------
+	//m_recvFile.Create(IDD_RECEIVE_FILE);
+	//m_recvFile.ShowWindow(SW_SHOW);
+	//CString info, fmt;
+	//fmt.LoadStringW(RECV_FILE_INFO);
+	//info.Format(fmt, L"0.0.0.0", L"123.txt", L"3.87 Mb");
+	//info += L" Do you want to accept it?";
+	//m_recvFile.SetDlgItemTextW(IDC_FILE_INFO, info);
 	//INT_PTR result = m_recvFile.DoModal();// bug!
 	//-----------------LAN network setting dialog--------------------
-	m_lan.Create(IDD_LAN_SELECT);
-	m_lan.InitialLanSelList();
-	m_lan.ShowWindow(SW_SHOW);
+	
+	//m_lan.Create(IDD_LAN_SELECT);
+	//m_lan.InitialLanSelList();
+	//m_lan.ShowWindow(SW_SHOW);
+	
 	//m_lan.DoModal();// Bug!
 
 	AfxInitRichEdit2();

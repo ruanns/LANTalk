@@ -70,3 +70,10 @@ Debug/LANTalk.tlog/CL.command.1.tlog
 *.aps
 Debug/vc140.pdb
 *.idb
+*.log
+.vs/LANTalk/v14/.suo
+*.dat
+*.log
+*.log
+*.idb
+LANTalk.aps

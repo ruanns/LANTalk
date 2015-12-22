@@ -65,6 +65,7 @@ public:
 	int GetUseFulID();
 	int NewID();
 	void SaveMsgRecd();
+	int SelectAdapter(CString* szNameAdapter, CString* szIP, CString* szMask, int iNum);
 };
 
 extern CLANTalkApp theApp;

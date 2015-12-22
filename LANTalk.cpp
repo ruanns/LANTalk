@@ -234,7 +234,7 @@ int CLANTalkApp::SayHello()
 	UDP_Pack pack;
 	memset(&pack, 0, sizeof(UDP_Pack));
 	pack.nCmd = SEND_ON;
-	pack.dataLen = sizeof(StrInfo);
+	//pack.dataLen = sizeof(StrInfo);
 	unsigned int //broad_ip = theApp.info.ip | (~theApp.info.mask),
 		begin_ip = theApp.info.ip & (theApp.info.mask),
 		mask = theApp.info.mask;
@@ -268,7 +268,7 @@ int CLANTalkApp::SayHello()
 		//local.sin_addr.s_addr = htonl(des_addr);
 		CString p = int2ip(des_addr);
 		//if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), (const SOCKADDR*)&local, len) == SOCKET_ERROR)
-		if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + 2 * sizeof(int), UDP_PORT, int2ip(des_addr)) == SOCKET_ERROR)
+		if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, int2ip(des_addr)) == SOCKET_ERROR)
 		{
 			theApp.Mymsg.GetLastError();
 		}
@@ -286,11 +286,11 @@ int CLANTalkApp::ReplyHello(CString desIP)
 	UDP_Pack pack;
 	memset(&pack, 0, sizeof(UDP_Pack));
 	pack.nCmd = SEND_REPLY;
-	pack.dataLen = sizeof(StrInfo);
+	//pack.dataLen = sizeof(StrInfo);
 	memcpy(pack.data, &(theApp.sInfo), sizeof(StrInfo));
 
 	
-	if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + 2 * sizeof(int), UDP_PORT, desIP) == SOCKET_ERROR)
+	if (theApp.Mymsg.SendTo(&pack, sizeof(StrInfo) + sizeof(int), UDP_PORT, desIP) == SOCKET_ERROR)
 	{
 		theApp.Mymsg.GetLastError();
 	}
@@ -319,12 +319,12 @@ int CLANTalkApp::SendMsg(CString sIP, CString MyMsg)
 	UINT16 len = min(DADA_LENGTH - 2, MyMsg.GetLength() * 2);
 
 	memcpy(pack.data, wMsg, len);
-	pack.dataLen = len;
+	//pack.dataLen = len;
 	//pack.data[1] = UINT8(len && 0x00ff);
 	//pack.data[0] = UINT8((len >> 8) && 0x00ff);
 
 
-	theApp.Mymsg.SendTo(&pack, 2 * sizeof(int) + len, UDP_PORT, sIP);
+	theApp.Mymsg.SendTo(&pack, sizeof(int) + len, UDP_PORT, sIP);
 
 	//unsigned int broad_ip = theApp.info.ip | (~theApp.info.mask);
 	//CString BIP = int2ip(broad_ip);
@@ -378,11 +378,13 @@ void CLANTalkApp::SaveMsgRecd()
 		msgRecd = L"";
 		msgRecd.Format(L"-----User Name:%s  Host Name:%s  IP:%s  Mark:%s-----\r\n",
 			theApp.user[i].GetName(), theApp.user[i].GetHostName(), theApp.user[i].
-			GetIp(), theApp.user[i].GetMark());
+			GetIp(), theApp.user[i].GetMask());
 		msgRecd = msgRecd + theApp.user[i].GetMsgRecd();
 		wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
-		file.SeekToEnd();
-		//file.Write(msgRecd, msgRecd.GetLength()*2);
+		ULONG len  = file.SeekToEnd();
+		if (len != 0) {
+			file.Seek(-2, CFile::end);
+		}
 		file.Write(tmpChar, msgRecd.GetLength() * 2);
 		//delete msg
 		p = theApp.user[i].GetPmsg();
@@ -393,5 +395,21 @@ void CLANTalkApp::SaveMsgRecd()
 			p = tmp;
 		}
 	}
+	file.Write(L"\0",2);
 	file.Close();
+}
+
+
+int CLANTalkApp::SelectAdapter(CString* szNameAdapter, CString* szIP, CString* szMask, int iNum)
+{
+	LanSelDlg lanSel;
+	lanSel.Create(IDD_LAN_SELECT);
+	lanSel.InitialLanSelList();
+	for (int i = 0; i < iNum; i++) {
+		lanSel.insertLanmode(szNameAdapter[i], szIP[i], szMask[i]);
+	}
+	lanSel.ShowWindow(SW_SHOW);
+	lanSel.DoModal();
+	
+	return theApp.netMode;
 }

@@ -3,12 +3,12 @@
 
 //EUser
 
-EUser::EUser(CString _name, CString _hostname, CString _ip, CString _mark)
+EUser::EUser(CString _name, CString _hostname, CString _ip, CString _mask)
 {
 	userName = _name;
 	hostName = _hostname;
 	ipAddress = _ip;
-	Mark = _mark;
+	Mask = _mask;
 	msgNum = 0;
 	pMsg = NULL;
 	endMsg = NULL;
@@ -34,9 +34,9 @@ CString EUser::GetIp()
 	return ipAddress;
 }
 
-CString EUser::GetMark()
+CString EUser::GetMask()
 {
-	return Mark;
+	return Mask;
 }
 EMessage * EUser::GetPmsg()
 {
@@ -84,7 +84,7 @@ CString EUser::GetMsgRecd()
 	CString msgRecd;
 	if (0 == msgNum || NULL == pMsg)
 	{
-		msgRecd = L"";
+		msgRecd.Format(L"\tThere no chat record between you and %s.\r\n",userName);
 	}
 	else {
 		msgRecd = L"";
@@ -95,7 +95,7 @@ CString EUser::GetMsgRecd()
 		for (UINT i = 1; i <= msgNum && p != NULL; i++)
 		{
 			if (TRUE == p->GetSrMark()) {
-				tmpStr.Format(tmpFor, p->GetTime(), L"SENT", p->GetContent());
+				tmpStr.Format(tmpFor, i, p->GetTime(), L"SENT", p->GetContent());
 			}
 			else {
 				tmpStr.Format(tmpFor, i, p->GetTime(), L"RECEIVED", p->GetContent());
@@ -240,11 +240,11 @@ EFileList::~EFileList()
 {
 }
 
-EFile::EFile( CString _filePath, CString _title, double _p, BOOL _send)
+EFile::EFile( CString _filePath, CString _name, double _p, BOOL _send)
 {
 	ID = 0;
 	filePath = _filePath;
-	fileTitle = _title;
+	fileName = _name;
 	progress = _p;
 	sendMrk = _send;
 	next = NULL;
@@ -284,9 +284,9 @@ CString EFile::GetPath()
 	return CString(filePath);
 }
 
-CString EFile::GetFileTitle()
+CString EFile::GetFileName()
 {
-	return CString(fileTitle);
+	return CString(fileName);
 }
 
 double EFile::GetProgress()

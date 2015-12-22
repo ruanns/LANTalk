@@ -36,8 +36,8 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 
-	CRecvFileDlg m_recvFile;
-	LanSelDlg m_lan;
+	//CRecvFileDlg m_recvFile;
+	//LanSelDlg m_lan;
 	CChatDlg m_chat;
 	CChatToolBar m_tool;
 public:

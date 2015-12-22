@@ -48,4 +48,5 @@ public:
 	
 	int InsertRecMsg(CString ip, CString msg);
 	afx_msg void OnBnClickedButtonViewrecd();
+	afx_msg void OnBnClickedSendFile();
 };

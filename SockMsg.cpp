@@ -145,7 +145,7 @@ void SockMsg::OnReceive(int nErrorCode)
 		{
 			wchar_t * wMsg = (wchar_t *)pack1.data;
 			//UINT16 MsgLen = (UINT16)wMsg[0];
-			CString csMsg(wMsg + 1);
+			CString csMsg(wMsg);
 			//dlg->InserMessage(sIP,csMsg);
 			dlg->GetChatDlg()->InsertRecMsg(sIP, csMsg);
 			break;

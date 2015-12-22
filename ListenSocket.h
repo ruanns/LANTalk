@@ -10,7 +10,10 @@ enum
 {
 	SEND_REQUEST = 0x12f8,
 	SEND_AGREE = 0x12f9,
-	SEND_DATA = 0x12f10,
+	SEND_DATA = 0x12fa,
+	SEND_INFO = 0x12fb,
+	SEND_BEGIN = 0x12fc,
+	SEDN_ENSURE = 0x12fd,
 };
 
 

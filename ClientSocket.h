@@ -31,8 +31,15 @@ public:
 	int SendFile();
 protected:
 	CFile * m_File;
+	ULONGLONG uBlock;
+	ULONGLONG uReceivedBlock;
+	ULONGLONG uLength;
 public:
 	int OnSendAgree();
+	int OnSendInfo();
+	int OnSendData();
+	int OnSendBegin();
+	int OnSendEnsure();
 };
 
 

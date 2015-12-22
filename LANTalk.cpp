@@ -27,6 +27,7 @@ END_MESSAGE_MAP()
 // CLANTalkApp construction
 
 CLANTalkApp::CLANTalkApp()
+	: iNetUseful(0)
 {
 	// support Restart Manager
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
@@ -148,12 +149,14 @@ int CLANTalkApp::InitialNetwork()
 	//CString str(UserName);
 	//AfxMessageBox(str);
 	gethostname(sInfo.pc, 16);
-	hostent * host = gethostbyname(sInfo.pc);
-	in_addr * addr = (in_addr *)host->h_addr_list[0];
+	//hostent * host = gethostbyname(sInfo.pc);
+	//in_addr * addr = (in_addr *)host->h_addr_list[0];
 
-	CString szMark;
+	//CString szMark;
 
-	wchar_t * wMask;
+	//wchar_t * wMask;
+
+	CString * szMask = NULL, *szIP = NULL,* szNameAdapter = NULL;
 
 	
 
@@ -184,40 +187,82 @@ int CLANTalkApp::InitialNetwork()
 	}
 
 
+	int iAdapter = 0;
 
 	if ((dwRetVal = GetAdaptersInfo(pAdapterInfo, &ulOutBufLen)) == NO_ERROR) {
 
 		pAdapter = pAdapterInfo;
+		PIP_ADAPTER_INFO pAdapter1 = pAdapter;
 
-		while (pAdapter)
+		while (pAdapter1)
 
 		{
 
 
-			szMark.Format(_T("%s"), CA2W(pAdapter->IpAddressList.IpMask.String));
+			//szMark.Format(_T("%s"), CA2W(pAdapter1->IpAddressList.IpMask.String));
+			iAdapter++;
 
-			pAdapter = pAdapter->Next;
+			pAdapter1 = pAdapter1->Next;
 
 		}
 
 	}
 
-	wMask = szMark.GetBuffer(szMark.GetLength());
+	int iUsefulAdapter = 0;
+	if (iAdapter)
+	{
+		//char ipTmp[16];
+		szMask = new CString[iAdapter]();
+		szIP = new CString[iAdapter]();
+		szNameAdapter = new CString[iAdapter]();
+		while (pAdapter)
+		{
+			//szMark.Format(_T("%s"), CA2W(pAdapter1->IpAddressList.IpMask.String));
+			//iAdapter++;
+			//memcpy(&ipTmp, pAdapter->IpAddressList.IpAddress.String, 16);
+			if (CString(CA2W(pAdapter->IpAddressList.IpMask.String)) != L"0.0.0.0")
+			{
+				szMask[iUsefulAdapter].Format(_T("%s"), CA2W(pAdapter->IpAddressList.IpMask.String));
+				szIP[iUsefulAdapter].Format(_T("%s"), CA2W(pAdapter->IpAddressList.IpAddress.String));
+				szNameAdapter[iUsefulAdapter].Format(_T("%s"), CA2W(pAdapter->AdapterName));
+				iUsefulAdapter++;
+			}
+			
+			pAdapter = pAdapter->Next;
+		}
+	}
 
-	for (int i = 0; i < szMark.GetLength(); i++)
-		sInfo.mask[i] = char(UINT16(wMask[i]));
+
+	if (iUsefulAdapter == 0)
+	{
+		iNetUseful = 0;
+		return -1;
+	}
+
+	int iSelect = SelectAdapter(szNameAdapter, szIP, szMask, iUsefulAdapter);
+
+	//wMask = szMask[iSelect].GetBuffer(szMask[iSelect].GetLength());
+
+	//for (int i = 0; i < szMark.GetLength(); i++)
+		//sInfo.mask[i] = char(UINT16(wMask[i]));
 
 	
 
 	CString csIp;
-	info.mask = ip2int(szMark);
-	info.ip = addr->S_un.S_addr;
-	csIp = int2ip(info.ip);
+	info.mask = ip2int(szMask[iSelect]);
+	info.ip = ip2int(szIP[iSelect]);
+	//info.ip = addr->S_un.S_addr;
+	//csIp = int2ip(info.ip);
 
-	wchar_t * wIp = csIp.GetBuffer(csIp.GetLength());
+	wchar_t * wIp = szIP[iSelect].GetBuffer(szIP[iSelect].GetLength());
 
-	for (int i = 0; i < csIp.GetLength(); i++)
+	for (int i = 0; i < szIP[iSelect].GetLength(); i++)
 		sInfo.ip[i] = char(UINT16(wIp[i]));
+
+	wchar_t * wMask = szMask[iSelect].GetBuffer(szMask[iSelect].GetLength());
+
+	for (int i = 0; i < szMask[iSelect].GetLength(); i++)
+		sInfo.mask[i] = char(UINT16(wMask[i]));
 
 	
 
@@ -231,6 +276,8 @@ int CLANTalkApp::InitialNetwork()
 
 int CLANTalkApp::SayHello()
 {
+	if (!iNetUseful)
+		return -1;
 	UDP_Pack pack;
 	memset(&pack, 0, sizeof(UDP_Pack));
 	pack.nCmd = SEND_ON;
@@ -303,9 +350,43 @@ int CLANTalkApp::ExitInstance()
 	// TODO: Add your specialized code here and/or call the base class
 	Mymsg.Close();
 	m_listen.Close();
-	
-	SaveMsgRecd();
-	
+	EMessage *p = NULL;
+	EMessage* tmp = NULL;
+	CString msgRecd;
+	CFile file;
+	BOOL flag = TRUE;
+	msgRecd.LoadStringW(RECORD_FILE_NAME);
+	if (!file.Open(msgRecd, CFile::modeWrite
+		| CFile::typeBinary) )
+	{
+		AfxMessageBox(L"Error happens when create the record file.");
+		flag = FALSE;
+	}
+		
+	for (int i = 0; L"0.0.0.0" != theApp.user[i].GetIp() && flag; i++)
+	{
+		//save message record
+		msgRecd = L"";
+		msgRecd.Format(L"-----User Name:%s  Host Name:%s  IP:%s  Mark:%s-----",
+			theApp.user[i].GetName(),theApp.user[i].GetHostName(),theApp.user[i].
+			GetIp(),theApp.user[i].GetMark());
+		msgRecd = msgRecd + theApp.user[i].GetAllMessage();
+		wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
+		file.SeekToEnd();
+		//file.Write(msgRecd, msgRecd.GetLength()*2);
+		file.Write(tmpChar, msgRecd.GetLength() * 2);
+		//delete msg
+		p = theApp.user[i].GetPmsg();
+		while (p != NULL)
+		{
+			tmp = p->GetNextMsg();
+			delete p;
+			p = tmp;
+		}
+	}
+	if (flag)
+		file.Close();
+
 	return CWinApp::ExitInstance();
 }
 
@@ -353,63 +434,4 @@ int CLANTalkApp::GetUseFulID()
 int CLANTalkApp::NewID()
 {
 	return 0;
-}
-
-
-void CLANTalkApp::SaveMsgRecd()
-{
-	EMessage *p = NULL;
-	EMessage* tmp = NULL;
-	CString msgRecd;
-	CFile file;
-	BOOL flag = TRUE;
-	msgRecd.LoadStringW(RECORD_FILE_NAME);
-	if (!file.Open(msgRecd, CFile::modeCreate | CFile::modeNoTruncate
-		| CFile::modeWrite | CFile::typeBinary))
-	{
-		AfxMessageBox(L"Error happens when create the record file.");
-		flag = FALSE;
-		return;
-	}
-	
-	for (int i = 0; L"0.0.0.0" != theApp.user[i].GetIp() && flag; i++)
-	{
-		//save message record
-		msgRecd = L"";
-		msgRecd.Format(L"-----User Name:%s  Host Name:%s  IP:%s  Mark:%s-----\r\n",
-			theApp.user[i].GetName(), theApp.user[i].GetHostName(), theApp.user[i].
-			GetIp(), theApp.user[i].GetMask());
-		msgRecd = msgRecd + theApp.user[i].GetMsgRecd();
-		wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
-		ULONG len  = file.SeekToEnd();
-		if (len != 0) {
-			file.Seek(-2, CFile::end);
-		}
-		file.Write(tmpChar, msgRecd.GetLength() * 2);
-		//delete msg
-		p = theApp.user[i].GetPmsg();
-		while (p != NULL)
-		{
-			tmp = p->GetNextMsg();
-			delete p;
-			p = tmp;
-		}
-	}
-	file.Write(L"\0",2);
-	file.Close();
-}
-
-
-int CLANTalkApp::SelectAdapter(CString* szNameAdapter, CString* szIP, CString* szMask, int iNum)
-{
-	LanSelDlg lanSel;
-	lanSel.Create(IDD_LAN_SELECT);
-	lanSel.InitialLanSelList();
-	for (int i = 0; i < iNum; i++) {
-		lanSel.insertLanmode(szNameAdapter[i], szIP[i], szMask[i]);
-	}
-	lanSel.ShowWindow(SW_SHOW);
-	lanSel.DoModal();
-	
-	return theApp.netMode;
 }

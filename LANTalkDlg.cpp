@@ -362,28 +362,27 @@ int CLANTalkDlg::deleteUser(CString ip)
 FileInfo CLANTalkDlg::AcceptFile(CString FileName, CString FileLength, CString FrmIP)
 {
 
-	CRecvFileDlg recvFile(FileName);
-	recvFile.Create(IDD_RECEIVE_FILE);
-	recvFile.ShowWindow(SW_SHOW);
-	//Set file information in Static 
 	CString info, fmt;
 	fmt.LoadStringW(RECV_FILE_INFO);
 	info.Format(fmt, FrmIP, FileName, FileLength);
-	info += L" Do you want to accept it?";
-	recvFile.SetDlgItemTextW(IDC_FILE_INFO,info);
+	CRecvFileDlg recvFile(FileName, info);
+	//recvFile.SetDlgItemTextW(IDC_FILE_INFO,info);
 	INT_PTR result = recvFile.DoModal();
 
 	FileInfo fInfo;
-	CFile* openFile;
-	CString fullPath = recvFile.saveFolderPath + FileName;
-	if (L"" == recvFile.saveFolderPath && openFile->Open(fullPath,CFile::modeCreate | CFile::modeWrite 
-		| CFile::typeBinary)) {
-		EFile file(fullPath, FileName, 0.0, FALSE);
-		theApp.fileList.InsertToList(file);
-		
-		fInfo.ID = file.GetId();
-		fInfo.file = openFile;
-		fInfo.iAccept = 1;
+	if (IDOK == result) {
+		CFile* openFile = new CFile();
+		CString fullPath = recvFile.saveFolderPath + L"\\" + FileName;
+		if (openFile->Open(fullPath, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary)) {
+			EFile file(fullPath, FileName, 0.0, FALSE);
+			theApp.fileList.InsertToList(file);
+			//insert to message record
+
+			//parameter structure to return 
+			fInfo.ID = file.GetId();
+			fInfo.file = openFile;
+			fInfo.iAccept = 1;
+		}
 	}
 	else {
 		fInfo.ID = -1;

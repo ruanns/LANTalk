@@ -8,7 +8,7 @@
 #include "LanSelDlg.h"
 #include "ChatToolBar.h"
 #include "RecvfileDlg.h"
-#include "RecvFileDlg.h"
+
 
 
 // CLANTalkDlg dialog
@@ -53,5 +53,3 @@ public:
 	FileInfo AcceptFile(CString FileName, CString FileLength, CString FrmIP);
 //	int SelectedAdapter;
 };
-
-

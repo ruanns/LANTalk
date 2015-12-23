@@ -236,57 +236,29 @@ int CLANTalkApp::InitialNetwork()
 	//wchar_t * wMask;
 
 	CString * szMask = NULL, *szIP = NULL, *szNameAdapter = NULL;
-
-
-
 	PIP_ADAPTER_INFO pAdapterInfo;
-
 	PIP_ADAPTER_INFO pAdapter = NULL;
-
 	DWORD dwRetVal = 0;
-
 	pAdapterInfo = (IP_ADAPTER_INFO *)malloc(sizeof(IP_ADAPTER_INFO));
-
 	ULONG ulOutBufLen;
-
-
 	ulOutBufLen = sizeof(IP_ADAPTER_INFO);
 
-
-
-
 	if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) == ERROR_BUFFER_OVERFLOW)
-
 	{
-
 		free(pAdapterInfo);
-
 		pAdapterInfo = (IP_ADAPTER_INFO *)malloc(ulOutBufLen);
-
 	}
-
-
 	int iAdapter = 0;
-
 	if ((dwRetVal = GetAdaptersInfo(pAdapterInfo, &ulOutBufLen)) == NO_ERROR) {
-
 		pAdapter = pAdapterInfo;
 		PIP_ADAPTER_INFO pAdapter1 = pAdapter;
-
 		while (pAdapter1)
-
 		{
-
-
 			//szMark.Format(_T("%s"), CA2W(pAdapter1->IpAddressList.IpMask.String));
 			iAdapter++;
-
 			pAdapter1 = pAdapter1->Next;
-
 		}
-
 	}
-
 	int iUsefulAdapter = 0;
 	if (iAdapter)
 	{
@@ -306,52 +278,33 @@ int CLANTalkApp::InitialNetwork()
 				szNameAdapter[iUsefulAdapter].Format(_T("%s"), CA2W(pAdapter->Description));
 				iUsefulAdapter++;
 			}
-
 			pAdapter = pAdapter->Next;
 		}
 	}
-
 	if (iUsefulAdapter == 0)
 	{
 		//iNetUseful = 0;
 		return -1;
 	}
-
 	iNetUseful = 1;
 	SelectAdapter(szNameAdapter, szIP, szMask, iUsefulAdapter);
-
 	int iSelect = netMode;
-
 	//wMask = szMask[iSelect].GetBuffer(szMask[iSelect].GetLength());
-
 	//for (int i = 0; i < szMark.GetLength(); i++)
 	//sInfo.mask[i] = char(UINT16(wMask[i]));
-
-
-
 	CString csIp;
-	
 	info.mask = ip2int(szMask[iSelect]);
 	info.ip = ip2int(szIP[iSelect]);
 	//info.ip = addr->S_un.S_addr;
 	//csIp = int2ip(info.ip);
-
 	wchar_t * wIp = szIP[iSelect].GetBuffer(szIP[iSelect].GetLength());
-
 	for (int i = 0; i < szIP[iSelect].GetLength(); i++)
 		sInfo.ip[i] = char(UINT16(wIp[i]));
-
 	wchar_t * wMask = szMask[iSelect].GetBuffer(szMask[iSelect].GetLength());
-
 	for (int i = 0; i < szMask[iSelect].GetLength(); i++)
 		sInfo.mask[i] = char(UINT16(wMask[i]));
-
-
-
-
 	//info.ip = ip2int(csIp);
 	//AfxMessageBox(str);
-	
 	return 0;
 }
 
@@ -364,43 +317,7 @@ int CLANTalkApp::ExitInstance()
 	// TODO: Add your specialized code here and/or call the base class
 	Mymsg.Close();
 	m_listen.Close();
-	EMessage *p = NULL;
-	EMessage* tmp = NULL;
-	CString msgRecd;
-	CFile file;
-	BOOL flag = TRUE;
-	msgRecd.LoadStringW(RECORD_FILE_NAME);
-	if (!file.Open(msgRecd, CFile::modeWrite
-		| CFile::typeBinary) )
-	{
-		AfxMessageBox(L"Error happens when create the record file.");
-		flag = FALSE;
-	}
-		
-	for (int i = 0; L"0.0.0.0" != user[i].GetIp() && flag; i++)
-	{
-		//save message record
-		msgRecd = L"";
-		msgRecd.Format(L"-----User Name:%s  Host Name:%s  IP:%s  Mark:%s-----",
-			user[i].GetName(),user[i].GetHostName(),user[i].
-			GetIp(),user[i].GetMask());
-		msgRecd = msgRecd + user[i].GetAllMessage();
-		wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
-		file.SeekToEnd();
-		//file.Write(msgRecd, msgRecd.GetLength()*2);
-		file.Write(tmpChar, msgRecd.GetLength() * 2);
-		//delete msg
-		p = user[i].GetPmsg();
-		while (p != NULL)
-		{
-			tmp = p->GetNextMsg();
-			delete p;
-			p = tmp;
-		}
-	}
-	if (flag)
-		file.Close();
-
+	SaveMsgRecd();
 	return CWinApp::ExitInstance();
 }
 
@@ -458,27 +375,29 @@ void CLANTalkApp::SaveMsgRecd()
 	CFile file;
 	BOOL flag = TRUE;
 	msgRecd.LoadStringW(RECORD_FILE_NAME);
-	if (!file.Open(msgRecd, CFile::modeWrite
-		| CFile::typeBinary))
+	if (!file.Open(msgRecd, CFile::modeCreate | CFile::modeNoTruncate
+		| CFile::modeWrite | CFile::typeBinary))
 	{
 		AfxMessageBox(L"Error happens when create the record file.");
-		flag = FALSE;
+		return;
 	}
-
-	for (int i = 0; L"0.0.0.0" != user[i].GetIp() && flag; i++)
+	ULONG len = file.SeekToEnd();
+	if (len != 0) {
+		file.Seek(-2, CFile::end);
+	}
+	for (int i = 0; L"0.0.0.0" != theApp.user[i].GetIp() && flag; i++)
 	{
 		//save message record
 		msgRecd = L"";
-		msgRecd.Format(L"-----User Name:%s  Host Name:%s  IP:%s  Mark:%s-----",
-			user[i].GetName(), user[i].GetHostName(), user[i].
-			GetIp(), user[i].GetMask());
-		msgRecd = msgRecd + user[i].GetAllMessage();
+		msgRecd.Format(L"---------User Name:%s  Host Name:%s  IP:%s  Mark:%s---------\r\n",
+			theApp.user[i].GetName(), theApp.user[i].GetHostName(), theApp.user[i].
+			GetIp(), theApp.user[i].GetMask());
+		msgRecd = msgRecd + theApp.user[i].GetMsgRecd();
 		wchar_t *tmpChar = msgRecd.GetBuffer(msgRecd.GetLength());
-		file.SeekToEnd();
 		//file.Write(msgRecd, msgRecd.GetLength()*2);
 		file.Write(tmpChar, msgRecd.GetLength() * 2);
 		//delete msg
-		p = user[i].GetPmsg();
+		p = theApp.user[i].GetPmsg();
 		while (p != NULL)
 		{
 			tmp = p->GetNextMsg();
@@ -486,8 +405,8 @@ void CLANTalkApp::SaveMsgRecd()
 			p = tmp;
 		}
 	}
-	if (flag)
-		file.Close();
+	file.Write(L"\0", 2);
+	file.Close();
 }
 
 int CLANTalkApp::SelectAdapter(CString * szNameAdapter, CString * szIP, CString * szMask, int iNum)

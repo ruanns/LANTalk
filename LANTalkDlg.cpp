@@ -121,7 +121,7 @@ BOOL CLANTalkDlg::OnInitDialog()
 
 	AfxInitRichEdit2();
 	m_chat.Create(IDD_CHAT);
-	m_chat.ShowWindow(1);
+	m_chat.ShowWindow(SW_SHOWNORMAL);
 	SetTimer(ID_TIMER1, 10000, NULL);
 
 	

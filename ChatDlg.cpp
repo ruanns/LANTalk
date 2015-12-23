@@ -77,9 +77,9 @@ void CChatDlg::OnPaint()
 	GetClientRect(&rect);
 	int cx = rect.Width(), cy = rect.Height();
 	if (m_edit)
-		m_edit.SetWindowPos(NULL, cx * 2 / 5, cy * 4 / 7, cx * 3 / 5, cy * 3 / 7 - 30, SWP_NOZORDER);
+		m_edit.SetWindowPos(NULL, cx * 2 / 5, cy * 8 / 11, cx * 3 / 5, cy * 3 / 11 - 30, SWP_NOZORDER);
 	if (m_message)
-		m_message.SetWindowPos(NULL, cx * 2 / 5, 0, cx * 3 / 5, cy * 4 / 7, SWP_NOZORDER);
+		m_message.SetWindowPos(NULL, cx * 2 / 5, 0, cx * 3 / 5, cy * 8 / 11, SWP_NOZORDER);
 	CWnd * cWnd = GetDlgItem(IDC_BUTTON_SEND);
 	if (cWnd)
 		cWnd->SetWindowPos(NULL, cx - 70, cy - 30, 70, 30, SWP_NOZORDER);

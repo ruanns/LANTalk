@@ -24,12 +24,12 @@ unsigned int ip2int(CString mask)
 	m1 = mask.GetBuffer(mask.GetLength());
 	unsigned int imask = 0;
 	int len = mask.GetLength();
-	int x[4][3];
-	for (int m = 0; m < 4; m++)
-	{
-		for (int n = 0; n < 3; n++)
-			x[m][n] = 0;
-	}
+	//int * x1 = new int[12]();
+	int x1[12];
+	memset(x1, 0, 12 * sizeof(int));
+	//for (int i = 0; i < 13; i++)
+	//x1[i] = 0;
+
 	int mul[3] = { 1, 10, 100 };
 	int i = 0, j = 0;
 	for (int k = 0; k < len; k++)
@@ -41,9 +41,9 @@ unsigned int ip2int(CString mask)
 		}
 		else
 		{
-			for (int s = j; s >= 0; s--)
-				x[i][s + 1] = x[i][s];
-			x[i][0] = int(m1[k] - 48);
+			for (int s = j - 1; s >= 0; s--)
+				x1[3 * i + s + 1] = x1[3 * i + s];
+			x1[3 * i] = int(m1[k] - 48);
 			j++;
 
 		}
@@ -53,10 +53,11 @@ unsigned int ip2int(CString mask)
 		imask = imask << 8;
 		int temp = 0;
 		for (int n = 0; n < 3; n++)
-			temp = temp + x[m][n] * mul[n];
+			temp = temp + x1[3 * m + n] * mul[n];
 		imask = imask + temp;
 
 	}
+
 	return imask;
 }
 

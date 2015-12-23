@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CChatDlg, CDialog)
 	ON_NOTIFY(NM_CLICK, IDC_LIST_USER, &CChatDlg::OnNMClickListUser)
 	ON_BN_CLICKED(IDC_BUTTON_VIEWRECD, &CChatDlg::OnBnClickedButtonViewrecd)
 	ON_BN_CLICKED(IDC_SEND_FILE, &CChatDlg::OnBnClickedSendFile)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -126,7 +127,7 @@ BOOL CChatDlg::OnInitDialog()
 	// TODO:  Add extra initialization here
 	InitialUserList();
 	m_message.SetReadOnly(1);
-	m_recd = NULL;
+	m_recdDlg.Create(IDD_RECD_DLG);
 	pCurrentUser = NULL;
 	theApp.InitialNetwork();
 	theApp.SayHello();
@@ -258,20 +259,15 @@ int CChatDlg::InsertRecMsg(CString ip, CString message)
 void CChatDlg::OnBnClickedButtonViewrecd()
 {
 	// TODO: 在此添加控件通知?理程序代?
-	if (NULL != m_recd)
-		delete m_recd;
-	m_recd = new CRecdViewDlg;
-	if (NULL != m_recd) {
-		BOOL flag = m_recd->Create(IDD_RECD_DLG, this);
-		if (!flag)
-			AfxMessageBox(L"Error creating Dialog");
-		m_recd->ShowWindow(SW_SHOW);
-	}
-	else {
-		AfxMessageBox(L"Error creating Dialog Object");
-		return;
-	}
-
+	//CRecdViewDlg recdDlg;
+	//BOOL flag = recdDlg.Create(IDD_RECD_DLG);
+	//if (!flag){
+		m_recdDlg.ShowWindow(SW_SHOW);
+	///}
+	//else {
+		//AfxMessageBox(L"Error creating Dialog Object");
+		//return;
+	//}
 	CFile file;
 	CString name;
 	name.LoadStringW(RECORD_FILE_NAME);
@@ -281,10 +277,12 @@ void CChatDlg::OnBnClickedButtonViewrecd()
 		CString recd(p);
 		if (L"" == recd)
 			recd = L"The record file is still empty";
-		m_recd->m_viewRecd.SetWindowTextW(recd);
+		m_recdDlg.m_viewRecd.SetWindowTextW(recd);
 		file.Close();
+		//m_recdDlg.ShowWindow(1);
 	}
 	else {
+		//m_recdDlg.ShowWindow(1);
 		AfxMessageBox(L"There is no record file available. ");
 		return;
 	}
@@ -307,24 +305,32 @@ void CChatDlg::OnBnClickedSendFile()
 	if (IDOK == result) {
 		CString path = sendFile.GetFolderPath();
 		CString fName = sendFile.GetFileName();
-		CFile file;
-		if (file.Open(path + L"\\" + fName, CFile::modeRead | 
+		CFile*  file = new CFile();
+		if (file->Open(path + L"\\" + fName, CFile::modeRead | 
 			CFile::typeBinary)) {
 			EFile f(path, fName, 0.0, TRUE);
 			theApp.fileList.InsertToList(f);
 			CTime time = CTime::GetCurrentTime();
 			CString tmpStr = time.Format(_T("%Y,%B %d, %A %H:%M:%S"));
 			CString cont;
-			cont.Format(L"%s <File Location:%s>",fName,path);
+			cont.Format(L"File: %s <File Location:%s>",fName,path);
 			EMessage msg(tmpStr, cont, TRUE);
 			pCurrentUser->insertMsg(msg);
 			//Transfer part
 			CString toIP = pCurrentUser->GetIp();
+			theApp.BeginToSendFile(file, toIP, f.GetId());
 			//AfxMessageBox(path + L"\r\n" + fName);
-			file.Close();
 		};
 	}
 	else {
 		return;
 	}
+}
+
+
+void CChatDlg::OnClose()
+{
+	// TODO: 在此添加消息?理程序代?和/或?用默?值
+	m_recdDlg.CloseWindow();
+	CDialog::OnClose();
 }

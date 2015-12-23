@@ -37,7 +37,7 @@ public:
 	CListCtrl * GetUserListControl();
 	
 protected:
-	CRecdViewDlg* m_recd;
+	CRecdViewDlg m_recdDlg;
 	CEdit m_message;
 	CButton m_button;
 	//CChatToolBar m_tool;
@@ -49,4 +49,5 @@ public:
 	int InsertRecMsg(CString ip, CString msg);
 	afx_msg void OnBnClickedButtonViewrecd();
 	afx_msg void OnBnClickedSendFile();
+	afx_msg void OnClose();
 };

@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #pragma comment(lib, "IPHLPAPI.lib")
 
+#include "ClientSocket.h"
+
 
 // CLANTalkApp
 
@@ -350,8 +352,28 @@ int CLANTalkApp::SendMsg(CString sIP, CString MyMsg)
 
 int CLANTalkApp::CreateListenSocket()
 {
-	if (m_listen.Create(TCP_PORT))
-		m_listen.Listen();
+	//if (m_listen.Create(TCP_PORT))
+	//	m_listen.Listen();
+	if (!m_listen.Socket())
+	{
+		//return -1;
+		AfxMessageBox(L"Creating Listening Socket Failed!");
+		return -1;
+	}
+	BOOL bOptVal = TRUE;
+	int bOptLen = sizeof(BOOL);
+
+	m_listen.SetSockOpt(SO_REUSEADDR, (void *)&bOptVal, bOptLen, SOL_SOCKET);
+
+	m_listen.Bind(TCP_PORT);
+
+	if (!m_listen.Listen())
+	{
+		AfxMessageBox(L"Creating Listening Socket Failed!");
+		m_listen.Close();
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -421,4 +443,25 @@ int CLANTalkApp::SelectAdapter(CString * szNameAdapter, CString * szIP, CString 
 	lanSel.DoModal();
 
 	return netMode;
+}
+
+
+int CLANTalkApp::BeginToSendFile(CFile* mFile, CString ip, int ID)
+{
+	CString csFilename = mFile->GetFileName();
+	CClientSocket * ccsClient = new CClientSocket(mFile, ID);
+	ccsClient->Create();
+	if (!ccsClient->Connect(ip, TCP_PORT))
+	{
+		AfxMessageBox(L"Connecting Failed");
+		ccsClient->Close();
+		delete ccsClient;
+		mFile->Close();
+		delete mFile;
+		return -1;
+	}
+
+	ccsClient->SendFileRequest();
+
+	return 0;
 }

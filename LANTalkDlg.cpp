@@ -374,15 +374,15 @@ FileInfo CLANTalkDlg::AcceptFile(CString FileName, CString FileLength, CString F
 	INT_PTR result = recvFile.DoModal();
 
 	FileInfo fInfo;
-	CFile openFile;
+	CFile* openFile;
 	CString fullPath = recvFile.saveFolderPath + FileName;
-	if (L"" == recvFile.saveFolderPath && openFile.Open(fullPath,CFile::modeCreate | CFile::modeWrite 
+	if (L"" == recvFile.saveFolderPath && openFile->Open(fullPath,CFile::modeCreate | CFile::modeWrite 
 		| CFile::typeBinary)) {
 		EFile file(fullPath, FileName, 0.0, FALSE);
 		theApp.fileList.InsertToList(file);
 		
 		fInfo.ID = file.GetId();
-		fInfo.file = &openFile;
+		fInfo.file = openFile;
 		fInfo.iAccept = 1;
 	}
 	else {
@@ -390,7 +390,7 @@ FileInfo CLANTalkDlg::AcceptFile(CString FileName, CString FileLength, CString F
 		fInfo.file = NULL;
 		fInfo.iAccept = 0;
 	}
-	recvFile.CloseWindow();//if necessary ?
+	//recvFile.CloseWindow();//if necessary ?
 
 	return FileInfo(fInfo);
 }

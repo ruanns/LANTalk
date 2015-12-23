@@ -70,6 +70,7 @@ public:
 public:
 	int iNetUseful;
 	int SelectedAdapter;
+	int BeginToSendFile(CFile* mFile, CString ip, int ID);
 };
 
 extern CLANTalkApp theApp;

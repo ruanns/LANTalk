@@ -12,10 +12,22 @@
 CClientSocket::CClientSocket()
 {
 	uReceivedBlock = 0;
+	nSend = 1;
 }
 
+CClientSocket::CClientSocket(CFile * file, int ID)
+{
+	uReceivedBlock = 0;
+	nSend = 1;
+	m_File = file;
+	nID = ID;
+	uLength = file->GetLength();
+	uBlock = uLength / MAX_BLOCK_LENGTH + 1;
+
+}
 CClientSocket::~CClientSocket()
 {
+	
 }
 
 
@@ -45,12 +57,15 @@ void CClientSocket::OnReceive(int nErrorCode)
 		OnSendRequest();
 	case SEND_AGREE:
 		OnSendAgree();
-	case SEND_INFO:
-		OnSendInfo();
+	//case SEND_INFO:
+		//OnSendInfo();
 	case SEND_DATA:
 		OnSendData();
-	case SEND_BEGIN:
-		OnSendBegin();
+	case SEDN_ENSURE:
+		OnSendEnsure();
+	//case SEND_BEGIN:
+		//OnSendBegin();
+
 	default:
 	
 
@@ -78,8 +93,10 @@ int CClientSocket::OnSendRequest()
 		FileLen.Format(L"%d %s", int(*length), L"MB");
 	else if (*lengthType == 3)
 		FileLen.Format(L"4.2f %s", length, L"GB");
+	memcpy(&uLength, tData.data + 12, sizeof(LONGLONG));
+	uBlock = uLength / MAX_BLOCK_LENGTH + 1;
 	CLANTalkDlg * dlg = (CLANTalkDlg *)AfxGetMainWnd();
-	FileInfo Finfo = dlg->AcceptFile(CString((wchar_t *)(tData.data + 12)), FileLen, IP);
+	FileInfo Finfo = dlg->AcceptFile(CString((wchar_t *)(tData.data + 20)), FileLen, IP);
 	//tcpData tData1;
 	int iAnswer;
 	int nCmd = SEND_AGREE;
@@ -99,6 +116,8 @@ int CClientSocket::OnSendRequest()
 
 	m_File = Finfo.file;
 	nID = Finfo.ID;
+	m_File->Seek(uLength, CFile::begin);
+	m_File->Seek(0, CFile::begin);
 
 	iAnswer = 2;
 	Send(&iAnswer, sizeof(unsigned int));
@@ -157,14 +176,15 @@ int CClientSocket::OnSendAgree()
 	else if (iAnswer == 2)
 	{
 		//ULONGLONG length = m_File->GetLength();
-		uLength = m_File->GetLength();
-		unsigned int BufferSize = MAX_BLOCK_LENGTH;
-		ULONGLONG nBuffer = uLength / BufferSize + 1;
-		uBlock = nBuffer;
+		//uLength = m_File->GetLength();
+		//unsigned int BufferSize = MAX_BLOCK_LENGTH;
+		//ULONGLONG nBuffer = uLength / BufferSize + 1;
+		//uBlock = nBuffer;
 		//int nCmd = SEND_INFO;
-		int nCmd = SEND_INFO;
-		Send(&nCmd, sizeof(int));
-		Send(&nBuffer, sizeof(uLength));
+		//int nCmd = SEND_INFO;
+		//Send(&nCmd, sizeof(int));
+		//Send(&nBuffer, sizeof(uLength));
+		SendFile();
 
 	}
 	return iAnswer;
@@ -203,6 +223,11 @@ int CClientSocket::OnSendData()
 		//return 1;
 	}
 	
+	int nCmd;
+	int nEnsure = 1;
+	Send(&nCmd, sizeof(nCmd));
+	Send(&nEnsure, sizeof(nEnsure));
+	
 	//m_File->Seek();
 	return 0;
 }
@@ -227,9 +252,44 @@ int CClientSocket::OnSendEnsure()
 		uReceivedBlock++;
 	if (uReceivedBlock == uBlock)
 	{
+		
+		m_File->Close();
 		Close();
+		delete m_File;
 		delete this;
 		return 1;
 	}
+	return 0;
+}
+
+
+int CClientSocket::SendFileRequest()
+{
+	int nCmd = SEND_REQUEST;
+	tcpData tData;
+	memset(&tData, 0, sizeof(tData));
+	memcpy(&tData.data + 12, &uLength, sizeof(uLength));
+	int * iType = (int *)tData.data;
+	double * length = (double *)(tData.data + 4);
+	if (uLength < 1024 * 1024)
+	{
+		*iType = 1;
+		*length = double(uLength / 1024);
+	}
+	else if (uLength < 1024 * 1024 * 1024)
+	{
+		*iType = 2;
+		*length = double(uLength / 1024 / 1024);
+	}
+	else 
+	{
+		*iType = 3;
+		*length = double(uLength) / 1024 / 1024 / 1024;
+	}
+	CString csName = m_File->GetFileName();
+	wchar_t * wName = csName.GetBuffer(csName.GetLength());
+	memcpy(tData.data + 20, wName, 2 * csName.GetLength());
+	Send(&nCmd, sizeof(nCmd));
+	Send(&tData, 1024);
 	return 0;
 }

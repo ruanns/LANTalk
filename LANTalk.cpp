@@ -403,7 +403,7 @@ void CLANTalkApp::SaveMsgRecd()
 		AfxMessageBox(L"Error happens when create the record file.");
 		return;
 	}
-	ULONG len = file.SeekToEnd();
+	ULONGLONG len = file.SeekToEnd();
 	if (len != 0) {
 		file.Seek(-2, CFile::end);
 	}
@@ -411,7 +411,7 @@ void CLANTalkApp::SaveMsgRecd()
 	{
 		//save message record
 		msgRecd = L"";
-		msgRecd.Format(L"---------User Name:%s  Host Name:%s  IP:%s  Mark:%s---------\r\n",
+		msgRecd.Format(L"-----------User Name:%s  Host Name:%s  IP:%s  Mark:%s-----------\r\n",
 			theApp.user[i].GetName(), theApp.user[i].GetHostName(), theApp.user[i].
 			GetIp(), theApp.user[i].GetMask());
 		msgRecd = msgRecd + theApp.user[i].GetMsgRecd();
@@ -427,6 +427,8 @@ void CLANTalkApp::SaveMsgRecd()
 			p = tmp;
 		}
 	}
+	CTime time = CTime::GetCurrentTime();
+	msgRecd = L">>>>> RECORD SAVED " + time.Format(_T("@ %Y,%B %d, %A %H:%M:%S"));
 	file.Write(L"\0", 2);
 	file.Close();
 }
@@ -446,22 +448,30 @@ int CLANTalkApp::SelectAdapter(CString * szNameAdapter, CString * szIP, CString 
 }
 
 
-int CLANTalkApp::BeginToSendFile(CFile* mFile, CString ip, int ID)
+int CLANTalkApp::BeginToSendFile(CString fileName, CString ip, int ID)
 {
-	CString csFilename = mFile->GetFileName();
-	CClientSocket * ccsClient = new CClientSocket(mFile, ID);
+	CFile mFile;// dose this funcction need to open the file?
+	if (!mFile.Open(fileName, CFile::modeCreate | CFile::modeRead | CFile::typeBinary)) {
+		AfxMessageBox(L"Cannot open the file " + fileName + L" ¡I");
+		return -1;
+	}
+	CString csFilename = fileName;//where to use it?
+	ULONGLONG length = mFile.GetLength();
+	CClientSocket * ccsClient = new CClientSocket(fileName, length, ID);
 	ccsClient->Create();
 	if (!ccsClient->Connect(ip, TCP_PORT))
 	{
 		AfxMessageBox(L"Connecting Failed");
 		ccsClient->Close();
 		delete ccsClient;
-		mFile->Close();
-		delete mFile;
+		mFile.Close();
+		//delete mFile;
 		return -1;
 	}
 
 	ccsClient->SendFileRequest();
+	mFile.Close();
 
+	delete ccsClient;//can it be deleted here?
 	return 0;
 }

@@ -11,6 +11,7 @@
 
 
 
+
 // CLANTalkDlg dialog
 class CLANTalkDlg : public CDialogEx
 {
@@ -52,4 +53,10 @@ public:
 	int deleteUser(CString ip);
 	FileInfo AcceptFile(CString FileName, CString FileLength, CString FrmIP);
 //	int SelectedAdapter;
+//	CIconButton m_help;
+//	CIconButton m_recdView;
+//	CIconButton m_reset;
+//	CIconButton m_setting;
+//	CIconButton m_about;
+//	CIconButton m_prog;
 };

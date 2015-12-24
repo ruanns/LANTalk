@@ -19,7 +19,7 @@ class CClientSocket : public CSocket
 	friend CListenSocket;
 public:
 	CClientSocket();
-	CClientSocket(CFile * file, int ID);
+	CClientSocket(CString file, ULONGLONG length, int ID);
 	virtual ~CClientSocket();
 	//virtual void OnAccept(int nErrorCode);
 	virtual void OnClose(int nErrorCode);
@@ -31,7 +31,7 @@ public:
 	int OnSendRequest();
 	int SendFile();
 protected:
-	CFile * m_File;
+	CString m_File;
 	ULONGLONG uBlock;
 	ULONGLONG uReceivedBlock;
 	ULONGLONG uLength;

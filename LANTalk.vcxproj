@@ -141,7 +141,26 @@
     <None Include="res\LANTalk.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\about.bmp" />
+    <Image Include="res\about.ico" />
+    <Image Include="res\head.bmp" />
+    <Image Include="res\help.bmp" />
+    <Image Include="res\help.ico" />
     <Image Include="res\LANTalk.ico" />
+    <Image Include="res\recd_view.bmp" />
+    <Image Include="res\recd_view.ico" />
+    <Image Include="res\reset.bmp" />
+    <Image Include="res\reset.ico" />
+    <Image Include="res\return.bmp" />
+    <Image Include="res\return.ico" />
+    <Image Include="res\saveRecd.bmp" />
+    <Image Include="res\search.bmp" />
+    <Image Include="res\search.ico" />
+    <Image Include="res\send_file.bmp" />
+    <Image Include="res\setting.bmp" />
+    <Image Include="res\setting.ico" />
+    <Image Include="res\transfer_progress.bmp" />
+    <Image Include="res\transfer_progress.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

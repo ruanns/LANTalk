@@ -99,6 +99,7 @@ BOOL CLANTalkDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
+
 	// TODO: Add extra initialization here
 	//-----------------Receive file dialog (For debug use)-----------
 	//m_recvFile.Create(IDD_RECEIVE_FILE);
@@ -179,12 +180,15 @@ void CLANTalkDlg::OnPaint()
 		CPaintDC dc(this);
 		CRect rect;
 		GetClientRect(&rect);
+		int cx = rect.Width(), cy = rect.Height();
 		//dc.FillSolidRect(rect, RGB(255, 192, 203));
 		CWnd * talkWnd = (CWnd *)&m_chat;
 		if (talkWnd)
-			talkWnd->SetWindowPos(NULL, rect.left, rect.top + 80, rect.Width(), rect.Height() - 80, SWP_NOZORDER);
-		dc.FillSolidRect(rect, RGB(255, 192, 203));
+			talkWnd->SetWindowPos(NULL, 0, 0, cx, cy, SWP_NOZORDER);
+		dc.FillSolidRect(rect, RGB(51, 161, 201));
+		
 		CDialogEx::OnPaint();
+		
 	}
 }
 
@@ -329,9 +333,10 @@ void CLANTalkDlg::InsertUser(CString UserName, CString HostName, CString IP, CSt
 	pos = theApp.currentUserNum;//
 	//int nColumnCount = pList->GetHeaderCtrl()->GetItemCount();
 
-	pList->InsertItem(LVIF_TEXT | LVIF_STATE, pos, UserName,
-		(pos % 2) == 0 ? LVIS_SELECTED : 0, LVIS_SELECTED, 0, 0);
-	pList->SetItemText(pos, 0, UserName);
+	//pList->InsertItem(LVIF_TEXT | LVIF_STATE, pos, UserName,
+		//(pos % 2) == 0 ? LVIS_SELECTED : 0, LVIS_SELECTED, 0, 0);
+	pList->InsertItem(pos, UserName);
+	//pList->SetItemText(pos, 0, UserName);
 	pList->SetItemText(pos, 1, HostName);
 	pList->SetItemText(pos, 2, IP);
 	pList->SetItemText(pos, 3, Mark);
@@ -371,22 +376,22 @@ FileInfo CLANTalkDlg::AcceptFile(CString FileName, CString FileLength, CString F
 
 	FileInfo fInfo;
 	if (IDOK == result) {
-		CFile* openFile = new CFile();
+		//CFile* openFile = new CFile();
 		CString fullPath = recvFile.saveFolderPath + L"\\" + FileName;
-		if (openFile->Open(fullPath, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary)) {
-			EFile file(fullPath, FileName, 0.0, FALSE);
-			theApp.fileList.InsertToList(file);
-			//insert to message record
+		EFile file(fullPath, FileName, 0.0, FALSE);
+		theApp.fileList.InsertToList(file);
+		//insert to message record
 
-			//parameter structure to return 
-			fInfo.ID = file.GetId();
-			fInfo.file = openFile;
-			fInfo.iAccept = 1;
-		}
+		//parameter structure to return 
+		fInfo.ID = file.GetId();
+		fInfo.file = fullPath;
+		fInfo.iAccept = 1;
+		//if (openFile->Open(fullPath, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary)) {
+		//	}
 	}
 	else {
 		fInfo.ID = -1;
-		fInfo.file = NULL;
+		fInfo.file = L"";
 		fInfo.iAccept = 0;
 	}
 	//recvFile.CloseWindow();//if necessary ?

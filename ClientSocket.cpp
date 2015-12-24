@@ -15,13 +15,13 @@ CClientSocket::CClientSocket()
 	nSend = 1;
 }
 
-CClientSocket::CClientSocket(CFile * file, int ID)
+CClientSocket::CClientSocket(CString file, ULONGLONG length, int ID)
 {
 	uReceivedBlock = 0;
 	nSend = 1;
 	m_File = file;
 	nID = ID;
-	uLength = file->GetLength();
+	uLength = length;
 	uBlock = uLength / MAX_BLOCK_LENGTH + 1;
 
 }
@@ -113,12 +113,19 @@ int CClientSocket::OnSendRequest()
 		//delete this;
 		return 1;
 	}
-
-	m_File = Finfo.file;
+	CFile openFile;
+	if(!openFile.Open(Finfo.file, CFile::modeCreate | CFile::modeWrite | 
+		CFile::typeBinary)){
+		AfxMessageBox(L"Cannot open the file " + Finfo.file + L" ¡I");
+		return -1;
+	}
+	
+	openFile;//to read or write
 	nID = Finfo.ID;
-	m_File->Seek(uLength, CFile::begin);
-	m_File->Seek(0, CFile::begin);
-
+	openFile.Seek(uLength, CFile::begin);
+	openFile.Seek(0, CFile::begin);
+	openFile.Close();
+	
 	iAnswer = 2;
 	Send(&iAnswer, sizeof(unsigned int));
 
@@ -137,27 +144,31 @@ int CClientSocket::SendFile()
 	tcpData tData;
 	int nCmd = SEND_DATA;
 	Send(&nCmd, sizeof(int));
-	
+	CFile openFile;
+	if (!openFile.Open(m_File, CFile::modeCreate | CFile::modeRead | CFile::typeBinary)) {
+		AfxMessageBox(L"Failed to open the file " + m_File + L" when send data¡I");
+		return -1;
+	}	
 	for (ULONGLONG i = 0; i < uBlock; i++)
 	{
 		if (i != uBlock - 1)
 		{
 			tData.uByte = BufferSize;
 			tData.uBlock = i;
-			m_File->Read(tData.data, BufferSize);
+			openFile.Read(tData.data, BufferSize);
 			Send(&tData, sizeof(tData));		
 		}
 		else
 		{
 			tData.uByte = rBuffer;
 			tData.uBlock = i;
-			m_File->Read(tData.data, rBuffer);
+			openFile.Read(tData.data, rBuffer);
 			Send(&tData, rBuffer + 2 * sizeof(unsigned int));
 		}
 		
 	}
 
-	//m_File->Close();
+	Close();
 	//delete m_File;
 	return 0;
 }
@@ -212,12 +223,17 @@ int CClientSocket::OnSendData()
 	int buffer_size = MAX_BLOCK_LENGTH;
 	Receive(&tData, sizeof(tData));
 	uReceivedBlock++;
-	m_File->Seek(tData.uBlock * buffer_size, CFile::begin);
-	m_File->Write(tData.data, tData.uByte);
+	CFile openFile;
+	if (!openFile.Open(m_File, CFile::modeCreate | CFile::modeReadWrite | CFile::typeBinary)) {
+		AfxMessageBox(L"Failed to open the file " + m_File + L" when send data¡I");
+		return -1;
+	}
+	openFile.Seek(tData.uBlock * buffer_size, CFile::begin);
+	openFile.Write(tData.data, tData.uByte);
 	if (uReceivedBlock == uBlock)
 	{
 		//if delete?
-		m_File->Close();
+		openFile.Close();
 		//Close();
 		//delete this;
 		//return 1;
@@ -253,9 +269,9 @@ int CClientSocket::OnSendEnsure()
 	if (uReceivedBlock == uBlock)
 	{
 		
-		m_File->Close();
+		//m_File->Close();
 		Close();
-		delete m_File;
+		//delete m_File;
 		delete this;
 		return 1;
 	}
@@ -286,7 +302,7 @@ int CClientSocket::SendFileRequest()
 		*iType = 3;
 		*length = double(uLength) / 1024 / 1024 / 1024;
 	}
-	CString csName = m_File->GetFileName();
+	CString csName = m_File;
 	wchar_t * wName = csName.GetBuffer(csName.GetLength());
 	memcpy(tData.data + 20, wName, 2 * csName.GetLength());
 	Send(&nCmd, sizeof(nCmd));

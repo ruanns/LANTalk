@@ -119,5 +119,62 @@
     <Image Include="res\LANTalk.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="res\about.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\help.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\recd_view.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\reset.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\return.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\search.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\setting.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\transfer_progress.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\about.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\help.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\recd_view.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\reset.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\return.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\search.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\setting.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\transfer_progress.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\send_file.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\head.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\saveRecd.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

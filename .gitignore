@@ -82,3 +82,6 @@ LANTalk.aps
 *.tlog
 *.pdb
 *.log
+*.suo
+Debug/vc140.idb
+*.pdb

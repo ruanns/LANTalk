@@ -104,6 +104,6 @@ private:
 struct FileInfo
 {
 int ID;
-CFile * file;
+CString file;
 int iAccept;
 };
